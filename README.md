@@ -29,7 +29,7 @@ Most Quran packages are heavy or require network downloads. This package is full
 - Remove diacritics & normalize text helpers
 - High-performance: smooth scrolling, 60fps
 - Light & dark mode compatible
-- Tajweed
+- Tajweed color support (Uthmani tajweed rules rendering)
 
 ---
 
@@ -73,6 +73,19 @@ Most Quran packages are heavy or require network downloads. This package is full
 - Page number lookup
 - Makki / Madani
 - Total counts constants
+
+---
+
+### 🎨 6. Tajweed Coloring
+
+Supports **Uthmani Tajweed coloring rules** for proper Quran recitation.
+
+Features:
+
+- Works in both **Light** and **Dark** modes
+- Toggle Tajweed on/off
+- No performance impact
+- Compatible with highlighting
 
 ---
 
