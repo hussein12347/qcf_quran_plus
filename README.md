@@ -92,18 +92,18 @@ Features:
 ## 📸 Screenshots
 
 <p align="center">
-  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/master/assets/screen_shoots/Screenshot_20260310_230313.png?raw=true" width="250"/>
-  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/master/assets/screen_shoots/Screenshot_20260310_230401.png?raw=true" width="250"/>
+  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/main/assets/screen_shoots/Screenshot_20260310_230313.png?raw=true" width="250"/>
+  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/main/assets/screen_shoots/Screenshot_20260310_230401.png?raw=true" width="250"/>
 </p>
 
 <p align="center">
-  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/master/assets/screen_shoots/Screenshot_20260310_230424.png?raw=true" width="250"/>
-  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/master/assets/screen_shoots/Screenshot_20260310_230445.png?raw=true" width="250"/>
+  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/main/assets/screen_shoots/Screenshot_20260310_230424.png?raw=true" width="250"/>
+  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/main/assets/screen_shoots/Screenshot_20260310_230445.png?raw=true" width="250"/>
 </p>
 
 <p align="center">
-  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/master/assets/screen_shoots/Screenshot_20260310_230854.png?raw=true" width="250"/>
-  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/master/assets/screen_shoots/Screenshot_20260310_231226.png?raw=true" width="250"/>
+  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/main/assets/screen_shoots/Screenshot_20260310_230854.png?raw=true" width="250"/>
+  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/main/assets/screen_shoots/Screenshot_20260310_231226.png?raw=true" width="250"/>
 </p>
 ---
 
