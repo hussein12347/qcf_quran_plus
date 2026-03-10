@@ -79,18 +79,18 @@ Most Quran packages are heavy or require network downloads. This package is full
 ## 📸 Screenshots
 
 <p align="center">
-  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/main/assets/screen_shots/Screenshot_20260310_230313?raw=true" width="250"/>
-  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/main/assets/screen_shots/Screenshot_20260310_230401?raw=true" width="250"/>
+  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/master/assets/screen_shots/Screenshot_20260310_230313?raw=true" width="250"/>
+  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/master/assets/screen_shots/Screenshot_20260310_230401?raw=true" width="250"/>
 </p>
 
 <p align="center">
-  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/main/assets/screen_shots/Screenshot_20260310_230424?raw=true" width="250"/>
-  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/main/assets/screen_shots/Screenshot_20260310_230445?raw=true" width="250"/>
+  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/master/assets/screen_shots/Screenshot_20260310_230424?raw=true" width="250"/>
+  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/master/assets/screen_shots/Screenshot_20260310_230445?raw=true" width="250"/>
 </p>
 
 <p align="center">
-  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/main/assets/screen_shots/Screenshot_20260310_230854?raw=true" width="250"/>
-  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/main/assets/screen_shots/Screenshot_20260310_231226?raw=true" width="250"/>
+  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/master/assets/screen_shots/Screenshot_20260310_230854?raw=true" width="250"/>
+  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/master/assets/screen_shots/Screenshot_20260310_231226?raw=true" width="250"/>
 </p>
 ---
 
