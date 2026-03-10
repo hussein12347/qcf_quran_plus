@@ -1,0 +1,1869 @@
+name: qcf_quran_plus
+description: "A new Flutter package project."
+version: 0.0.1
+homepage:
+
+environment:
+  sdk: ^3.11.0
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  scrollable_positioned_list: ^0.3.8
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
+flutter:
+
+  # To add assets to your package, add an assets section, like this:
+  assets:
+    - assets/fonts/
+    - assets/fonts/QCF4_tajweed_003/QCF4_tajweed_003.ttf
+    - assets/surah_banner.png
+  #   - images/a_dot_ham.jpeg
+  #
+  # For details regarding assets in packages, see
+  # https://flutter.dev/to/asset-from-package
+  #
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/to/resolution-aware-images
+
+  # To add custom fonts to your package, add a fonts section here,
+  # in this "flutter" section. Each entry in this list should have a
+  # "family" key with the font family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the font. For
+  # example:
+  fonts:
+
+    - family: "arsura"
+      fonts:
+        - asset: assets/fonts/arsura.ttf
+    - family: "hafs"
+      fonts:
+        - asset: assets/fonts/HafsSmart_08.ttf
+    - family: "QCF4_BSML"
+      fonts:
+        - asset: assets/fonts/QCF4_BSML/QCF4_BSML.ttf
+    - family: "QCF4_tajweed_001"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_001/QCF4_tajweed_001.ttf
+    - family: "QCF4_tajweed_002"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_002/QCF4_tajweed_002.ttf
+    - family: "QCF4_tajweed_003"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_003/QCF4_tajweed_003.ttf
+    - family: "QCF4_tajweed_004"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_004/QCF4_tajweed_004.ttf
+    - family: "QCF4_tajweed_005"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_005/QCF4_tajweed_005.ttf
+    - family: "QCF4_tajweed_006"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_006/QCF4_tajweed_006.ttf
+    - family: "QCF4_tajweed_007"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_007/QCF4_tajweed_007.ttf
+    - family: "QCF4_tajweed_008"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_008/QCF4_tajweed_008.ttf
+    - family: "QCF4_tajweed_009"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_009/QCF4_tajweed_009.ttf
+    - family: "QCF4_tajweed_010"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_010/QCF4_tajweed_010.ttf
+    - family: "QCF4_tajweed_011"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_011/QCF4_tajweed_011.ttf
+    - family: "QCF4_tajweed_012"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_012/QCF4_tajweed_012.ttf
+    - family: "QCF4_tajweed_013"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_013/QCF4_tajweed_013.ttf
+    - family: "QCF4_tajweed_014"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_014/QCF4_tajweed_014.ttf
+    - family: "QCF4_tajweed_015"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_015/QCF4_tajweed_015.ttf
+    - family: "QCF4_tajweed_016"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_016/QCF4_tajweed_016.ttf
+    - family: "QCF4_tajweed_017"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_017/QCF4_tajweed_017.ttf
+    - family: "QCF4_tajweed_018"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_018/QCF4_tajweed_018.ttf
+    - family: "QCF4_tajweed_019"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_019/QCF4_tajweed_019.ttf
+    - family: "QCF4_tajweed_020"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_020/QCF4_tajweed_020.ttf
+    - family: "QCF4_tajweed_021"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_021/QCF4_tajweed_021.ttf
+    - family: "QCF4_tajweed_022"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_022/QCF4_tajweed_022.ttf
+    - family: "QCF4_tajweed_023"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_023/QCF4_tajweed_023.ttf
+    - family: "QCF4_tajweed_024"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_024/QCF4_tajweed_024.ttf
+    - family: "QCF4_tajweed_025"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_025/QCF4_tajweed_025.ttf
+    - family: "QCF4_tajweed_026"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_026/QCF4_tajweed_026.ttf
+    - family: "QCF4_tajweed_027"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_027/QCF4_tajweed_027.ttf
+    - family: "QCF4_tajweed_028"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_028/QCF4_tajweed_028.ttf
+    - family: "QCF4_tajweed_029"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_029/QCF4_tajweed_029.ttf
+    - family: "QCF4_tajweed_030"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_030/QCF4_tajweed_030.ttf
+    - family: "QCF4_tajweed_031"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_031/QCF4_tajweed_031.ttf
+    - family: "QCF4_tajweed_032"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_032/QCF4_tajweed_032.ttf
+    - family: "QCF4_tajweed_033"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_033/QCF4_tajweed_033.ttf
+    - family: "QCF4_tajweed_034"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_034/QCF4_tajweed_034.ttf
+    - family: "QCF4_tajweed_035"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_035/QCF4_tajweed_035.ttf
+    - family: "QCF4_tajweed_036"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_036/QCF4_tajweed_036.ttf
+    - family: "QCF4_tajweed_037"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_037/QCF4_tajweed_037.ttf
+    - family: "QCF4_tajweed_038"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_038/QCF4_tajweed_038.ttf
+    - family: "QCF4_tajweed_039"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_039/QCF4_tajweed_039.ttf
+    - family: "QCF4_tajweed_040"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_040/QCF4_tajweed_040.ttf
+    - family: "QCF4_tajweed_041"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_041/QCF4_tajweed_041.ttf
+    - family: "QCF4_tajweed_042"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_042/QCF4_tajweed_042.ttf
+    - family: "QCF4_tajweed_043"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_043/QCF4_tajweed_043.ttf
+    - family: "QCF4_tajweed_044"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_044/QCF4_tajweed_044.ttf
+    - family: "QCF4_tajweed_045"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_045/QCF4_tajweed_045.ttf
+    - family: "QCF4_tajweed_046"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_046/QCF4_tajweed_046.ttf
+    - family: "QCF4_tajweed_047"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_047/QCF4_tajweed_047.ttf
+    - family: "QCF4_tajweed_048"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_048/QCF4_tajweed_048.ttf
+    - family: "QCF4_tajweed_049"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_049/QCF4_tajweed_049.ttf
+    - family: "QCF4_tajweed_050"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_050/QCF4_tajweed_050.ttf
+    - family: "QCF4_tajweed_051"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_051/QCF4_tajweed_051.ttf
+    - family: "QCF4_tajweed_052"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_052/QCF4_tajweed_052.ttf
+    - family: "QCF4_tajweed_053"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_053/QCF4_tajweed_053.ttf
+    - family: "QCF4_tajweed_054"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_054/QCF4_tajweed_054.ttf
+    - family: "QCF4_tajweed_055"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_055/QCF4_tajweed_055.ttf
+    - family: "QCF4_tajweed_056"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_056/QCF4_tajweed_056.ttf
+    - family: "QCF4_tajweed_057"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_057/QCF4_tajweed_057.ttf
+    - family: "QCF4_tajweed_058"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_058/QCF4_tajweed_058.ttf
+    - family: "QCF4_tajweed_059"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_059/QCF4_tajweed_059.ttf
+    - family: "QCF4_tajweed_060"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_060/QCF4_tajweed_060.ttf
+    - family: "QCF4_tajweed_061"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_061/QCF4_tajweed_061.ttf
+    - family: "QCF4_tajweed_062"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_062/QCF4_tajweed_062.ttf
+    - family: "QCF4_tajweed_063"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_063/QCF4_tajweed_063.ttf
+    - family: "QCF4_tajweed_064"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_064/QCF4_tajweed_064.ttf
+    - family: "QCF4_tajweed_065"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_065/QCF4_tajweed_065.ttf
+    - family: "QCF4_tajweed_066"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_066/QCF4_tajweed_066.ttf
+    - family: "QCF4_tajweed_067"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_067/QCF4_tajweed_067.ttf
+    - family: "QCF4_tajweed_068"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_068/QCF4_tajweed_068.ttf
+    - family: "QCF4_tajweed_069"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_069/QCF4_tajweed_069.ttf
+    - family: "QCF4_tajweed_070"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_070/QCF4_tajweed_070.ttf
+    - family: "QCF4_tajweed_071"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_071/QCF4_tajweed_071.ttf
+    - family: "QCF4_tajweed_072"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_072/QCF4_tajweed_072.ttf
+    - family: "QCF4_tajweed_073"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_073/QCF4_tajweed_073.ttf
+    - family: "QCF4_tajweed_074"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_074/QCF4_tajweed_074.ttf
+    - family: "QCF4_tajweed_075"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_075/QCF4_tajweed_075.ttf
+    - family: "QCF4_tajweed_076"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_076/QCF4_tajweed_076.ttf
+    - family: "QCF4_tajweed_077"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_077/QCF4_tajweed_077.ttf
+    - family: "QCF4_tajweed_078"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_078/QCF4_tajweed_078.ttf
+    - family: "QCF4_tajweed_079"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_079/QCF4_tajweed_079.ttf
+    - family: "QCF4_tajweed_080"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_080/QCF4_tajweed_080.ttf
+    - family: "QCF4_tajweed_081"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_081/QCF4_tajweed_081.ttf
+    - family: "QCF4_tajweed_082"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_082/QCF4_tajweed_082.ttf
+    - family: "QCF4_tajweed_083"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_083/QCF4_tajweed_083.ttf
+    - family: "QCF4_tajweed_084"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_084/QCF4_tajweed_084.ttf
+    - family: "QCF4_tajweed_085"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_085/QCF4_tajweed_085.ttf
+    - family: "QCF4_tajweed_086"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_086/QCF4_tajweed_086.ttf
+    - family: "QCF4_tajweed_087"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_087/QCF4_tajweed_087.ttf
+    - family: "QCF4_tajweed_088"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_088/QCF4_tajweed_088.ttf
+    - family: "QCF4_tajweed_089"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_089/QCF4_tajweed_089.ttf
+    - family: "QCF4_tajweed_090"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_090/QCF4_tajweed_090.ttf
+    - family: "QCF4_tajweed_091"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_091/QCF4_tajweed_091.ttf
+    - family: "QCF4_tajweed_092"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_092/QCF4_tajweed_092.ttf
+    - family: "QCF4_tajweed_093"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_093/QCF4_tajweed_093.ttf
+    - family: "QCF4_tajweed_094"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_094/QCF4_tajweed_094.ttf
+    - family: "QCF4_tajweed_095"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_095/QCF4_tajweed_095.ttf
+    - family: "QCF4_tajweed_096"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_096/QCF4_tajweed_096.ttf
+    - family: "QCF4_tajweed_097"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_097/QCF4_tajweed_097.ttf
+    - family: "QCF4_tajweed_098"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_098/QCF4_tajweed_098.ttf
+    - family: "QCF4_tajweed_099"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_099/QCF4_tajweed_099.ttf
+    - family: "QCF4_tajweed_100"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_100/QCF4_tajweed_100.ttf
+    - family: "QCF4_tajweed_101"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_101/QCF4_tajweed_101.ttf
+    - family: "QCF4_tajweed_102"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_102/QCF4_tajweed_102.ttf
+    - family: "QCF4_tajweed_103"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_103/QCF4_tajweed_103.ttf
+    - family: "QCF4_tajweed_104"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_104/QCF4_tajweed_104.ttf
+    - family: "QCF4_tajweed_105"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_105/QCF4_tajweed_105.ttf
+    - family: "QCF4_tajweed_106"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_106/QCF4_tajweed_106.ttf
+    - family: "QCF4_tajweed_107"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_107/QCF4_tajweed_107.ttf
+    - family: "QCF4_tajweed_108"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_108/QCF4_tajweed_108.ttf
+    - family: "QCF4_tajweed_109"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_109/QCF4_tajweed_109.ttf
+    - family: "QCF4_tajweed_110"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_110/QCF4_tajweed_110.ttf
+    - family: "QCF4_tajweed_111"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_111/QCF4_tajweed_111.ttf
+    - family: "QCF4_tajweed_112"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_112/QCF4_tajweed_112.ttf
+    - family: "QCF4_tajweed_113"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_113/QCF4_tajweed_113.ttf
+    - family: "QCF4_tajweed_114"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_114/QCF4_tajweed_114.ttf
+    - family: "QCF4_tajweed_115"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_115/QCF4_tajweed_115.ttf
+    - family: "QCF4_tajweed_116"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_116/QCF4_tajweed_116.ttf
+    - family: "QCF4_tajweed_117"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_117/QCF4_tajweed_117.ttf
+    - family: "QCF4_tajweed_118"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_118/QCF4_tajweed_118.ttf
+    - family: "QCF4_tajweed_119"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_119/QCF4_tajweed_119.ttf
+    - family: "QCF4_tajweed_120"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_120/QCF4_tajweed_120.ttf
+    - family: "QCF4_tajweed_121"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_121/QCF4_tajweed_121.ttf
+    - family: "QCF4_tajweed_122"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_122/QCF4_tajweed_122.ttf
+    - family: "QCF4_tajweed_123"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_123/QCF4_tajweed_123.ttf
+    - family: "QCF4_tajweed_124"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_124/QCF4_tajweed_124.ttf
+    - family: "QCF4_tajweed_125"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_125/QCF4_tajweed_125.ttf
+    - family: "QCF4_tajweed_126"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_126/QCF4_tajweed_126.ttf
+    - family: "QCF4_tajweed_127"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_127/QCF4_tajweed_127.ttf
+    - family: "QCF4_tajweed_128"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_128/QCF4_tajweed_128.ttf
+    - family: "QCF4_tajweed_129"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_129/QCF4_tajweed_129.ttf
+    - family: "QCF4_tajweed_130"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_130/QCF4_tajweed_130.ttf
+    - family: "QCF4_tajweed_131"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_131/QCF4_tajweed_131.ttf
+    - family: "QCF4_tajweed_132"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_132/QCF4_tajweed_132.ttf
+    - family: "QCF4_tajweed_133"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_133/QCF4_tajweed_133.ttf
+    - family: "QCF4_tajweed_134"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_134/QCF4_tajweed_134.ttf
+    - family: "QCF4_tajweed_135"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_135/QCF4_tajweed_135.ttf
+    - family: "QCF4_tajweed_136"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_136/QCF4_tajweed_136.ttf
+    - family: "QCF4_tajweed_137"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_137/QCF4_tajweed_137.ttf
+    - family: "QCF4_tajweed_138"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_138/QCF4_tajweed_138.ttf
+    - family: "QCF4_tajweed_139"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_139/QCF4_tajweed_139.ttf
+    - family: "QCF4_tajweed_140"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_140/QCF4_tajweed_140.ttf
+    - family: "QCF4_tajweed_141"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_141/QCF4_tajweed_141.ttf
+    - family: "QCF4_tajweed_142"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_142/QCF4_tajweed_142.ttf
+    - family: "QCF4_tajweed_143"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_143/QCF4_tajweed_143.ttf
+    - family: "QCF4_tajweed_144"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_144/QCF4_tajweed_144.ttf
+    - family: "QCF4_tajweed_145"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_145/QCF4_tajweed_145.ttf
+    - family: "QCF4_tajweed_146"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_146/QCF4_tajweed_146.ttf
+    - family: "QCF4_tajweed_147"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_147/QCF4_tajweed_147.ttf
+    - family: "QCF4_tajweed_148"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_148/QCF4_tajweed_148.ttf
+    - family: "QCF4_tajweed_149"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_149/QCF4_tajweed_149.ttf
+    - family: "QCF4_tajweed_150"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_150/QCF4_tajweed_150.ttf
+    - family: "QCF4_tajweed_151"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_151/QCF4_tajweed_151.ttf
+    - family: "QCF4_tajweed_152"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_152/QCF4_tajweed_152.ttf
+    - family: "QCF4_tajweed_153"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_153/QCF4_tajweed_153.ttf
+    - family: "QCF4_tajweed_154"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_154/QCF4_tajweed_154.ttf
+    - family: "QCF4_tajweed_155"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_155/QCF4_tajweed_155.ttf
+    - family: "QCF4_tajweed_156"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_156/QCF4_tajweed_156.ttf
+    - family: "QCF4_tajweed_157"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_157/QCF4_tajweed_157.ttf
+    - family: "QCF4_tajweed_158"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_158/QCF4_tajweed_158.ttf
+    - family: "QCF4_tajweed_159"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_159/QCF4_tajweed_159.ttf
+    - family: "QCF4_tajweed_160"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_160/QCF4_tajweed_160.ttf
+    - family: "QCF4_tajweed_161"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_161/QCF4_tajweed_161.ttf
+    - family: "QCF4_tajweed_162"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_162/QCF4_tajweed_162.ttf
+    - family: "QCF4_tajweed_163"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_163/QCF4_tajweed_163.ttf
+    - family: "QCF4_tajweed_164"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_164/QCF4_tajweed_164.ttf
+    - family: "QCF4_tajweed_165"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_165/QCF4_tajweed_165.ttf
+    - family: "QCF4_tajweed_166"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_166/QCF4_tajweed_166.ttf
+    - family: "QCF4_tajweed_167"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_167/QCF4_tajweed_167.ttf
+    - family: "QCF4_tajweed_168"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_168/QCF4_tajweed_168.ttf
+    - family: "QCF4_tajweed_169"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_169/QCF4_tajweed_169.ttf
+    - family: "QCF4_tajweed_170"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_170/QCF4_tajweed_170.ttf
+    - family: "QCF4_tajweed_171"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_171/QCF4_tajweed_171.ttf
+    - family: "QCF4_tajweed_172"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_172/QCF4_tajweed_172.ttf
+    - family: "QCF4_tajweed_173"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_173/QCF4_tajweed_173.ttf
+    - family: "QCF4_tajweed_174"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_174/QCF4_tajweed_174.ttf
+    - family: "QCF4_tajweed_175"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_175/QCF4_tajweed_175.ttf
+    - family: "QCF4_tajweed_176"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_176/QCF4_tajweed_176.ttf
+    - family: "QCF4_tajweed_177"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_177/QCF4_tajweed_177.ttf
+    - family: "QCF4_tajweed_178"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_178/QCF4_tajweed_178.ttf
+    - family: "QCF4_tajweed_179"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_179/QCF4_tajweed_179.ttf
+    - family: "QCF4_tajweed_180"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_180/QCF4_tajweed_180.ttf
+    - family: "QCF4_tajweed_181"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_181/QCF4_tajweed_181.ttf
+    - family: "QCF4_tajweed_182"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_182/QCF4_tajweed_182.ttf
+    - family: "QCF4_tajweed_183"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_183/QCF4_tajweed_183.ttf
+    - family: "QCF4_tajweed_184"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_184/QCF4_tajweed_184.ttf
+    - family: "QCF4_tajweed_185"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_185/QCF4_tajweed_185.ttf
+    - family: "QCF4_tajweed_186"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_186/QCF4_tajweed_186.ttf
+    - family: "QCF4_tajweed_187"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_187/QCF4_tajweed_187.ttf
+    - family: "QCF4_tajweed_188"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_188/QCF4_tajweed_188.ttf
+    - family: "QCF4_tajweed_189"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_189/QCF4_tajweed_189.ttf
+    - family: "QCF4_tajweed_190"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_190/QCF4_tajweed_190.ttf
+    - family: "QCF4_tajweed_191"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_191/QCF4_tajweed_191.ttf
+    - family: "QCF4_tajweed_192"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_192/QCF4_tajweed_192.ttf
+    - family: "QCF4_tajweed_193"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_193/QCF4_tajweed_193.ttf
+    - family: "QCF4_tajweed_194"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_194/QCF4_tajweed_194.ttf
+    - family: "QCF4_tajweed_195"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_195/QCF4_tajweed_195.ttf
+    - family: "QCF4_tajweed_196"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_196/QCF4_tajweed_196.ttf
+    - family: "QCF4_tajweed_197"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_197/QCF4_tajweed_197.ttf
+    - family: "QCF4_tajweed_198"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_198/QCF4_tajweed_198.ttf
+    - family: "QCF4_tajweed_199"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_199/QCF4_tajweed_199.ttf
+    - family: "QCF4_tajweed_200"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_200/QCF4_tajweed_200.ttf
+    - family: "QCF4_tajweed_201"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_201/QCF4_tajweed_201.ttf
+    - family: "QCF4_tajweed_202"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_202/QCF4_tajweed_202.ttf
+    - family: "QCF4_tajweed_203"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_203/QCF4_tajweed_203.ttf
+    - family: "QCF4_tajweed_204"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_204/QCF4_tajweed_204.ttf
+    - family: "QCF4_tajweed_205"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_205/QCF4_tajweed_205.ttf
+    - family: "QCF4_tajweed_206"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_206/QCF4_tajweed_206.ttf
+    - family: "QCF4_tajweed_207"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_207/QCF4_tajweed_207.ttf
+    - family: "QCF4_tajweed_208"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_208/QCF4_tajweed_208.ttf
+    - family: "QCF4_tajweed_209"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_209/QCF4_tajweed_209.ttf
+    - family: "QCF4_tajweed_210"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_210/QCF4_tajweed_210.ttf
+    - family: "QCF4_tajweed_211"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_211/QCF4_tajweed_211.ttf
+    - family: "QCF4_tajweed_212"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_212/QCF4_tajweed_212.ttf
+    - family: "QCF4_tajweed_213"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_213/QCF4_tajweed_213.ttf
+    - family: "QCF4_tajweed_214"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_214/QCF4_tajweed_214.ttf
+    - family: "QCF4_tajweed_215"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_215/QCF4_tajweed_215.ttf
+    - family: "QCF4_tajweed_216"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_216/QCF4_tajweed_216.ttf
+    - family: "QCF4_tajweed_217"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_217/QCF4_tajweed_217.ttf
+    - family: "QCF4_tajweed_218"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_218/QCF4_tajweed_218.ttf
+    - family: "QCF4_tajweed_219"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_219/QCF4_tajweed_219.ttf
+    - family: "QCF4_tajweed_220"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_220/QCF4_tajweed_220.ttf
+    - family: "QCF4_tajweed_221"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_221/QCF4_tajweed_221.ttf
+    - family: "QCF4_tajweed_222"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_222/QCF4_tajweed_222.ttf
+    - family: "QCF4_tajweed_223"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_223/QCF4_tajweed_223.ttf
+    - family: "QCF4_tajweed_224"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_224/QCF4_tajweed_224.ttf
+    - family: "QCF4_tajweed_225"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_225/QCF4_tajweed_225.ttf
+    - family: "QCF4_tajweed_226"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_226/QCF4_tajweed_226.ttf
+    - family: "QCF4_tajweed_227"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_227/QCF4_tajweed_227.ttf
+    - family: "QCF4_tajweed_228"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_228/QCF4_tajweed_228.ttf
+    - family: "QCF4_tajweed_229"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_229/QCF4_tajweed_229.ttf
+    - family: "QCF4_tajweed_230"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_230/QCF4_tajweed_230.ttf
+    - family: "QCF4_tajweed_231"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_231/QCF4_tajweed_231.ttf
+    - family: "QCF4_tajweed_232"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_232/QCF4_tajweed_232.ttf
+    - family: "QCF4_tajweed_233"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_233/QCF4_tajweed_233.ttf
+    - family: "QCF4_tajweed_234"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_234/QCF4_tajweed_234.ttf
+    - family: "QCF4_tajweed_235"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_235/QCF4_tajweed_235.ttf
+    - family: "QCF4_tajweed_236"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_236/QCF4_tajweed_236.ttf
+    - family: "QCF4_tajweed_237"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_237/QCF4_tajweed_237.ttf
+    - family: "QCF4_tajweed_238"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_238/QCF4_tajweed_238.ttf
+    - family: "QCF4_tajweed_239"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_239/QCF4_tajweed_239.ttf
+    - family: "QCF4_tajweed_240"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_240/QCF4_tajweed_240.ttf
+    - family: "QCF4_tajweed_241"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_241/QCF4_tajweed_241.ttf
+    - family: "QCF4_tajweed_242"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_242/QCF4_tajweed_242.ttf
+    - family: "QCF4_tajweed_243"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_243/QCF4_tajweed_243.ttf
+    - family: "QCF4_tajweed_244"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_244/QCF4_tajweed_244.ttf
+    - family: "QCF4_tajweed_245"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_245/QCF4_tajweed_245.ttf
+    - family: "QCF4_tajweed_246"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_246/QCF4_tajweed_246.ttf
+    - family: "QCF4_tajweed_247"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_247/QCF4_tajweed_247.ttf
+    - family: "QCF4_tajweed_248"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_248/QCF4_tajweed_248.ttf
+    - family: "QCF4_tajweed_249"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_249/QCF4_tajweed_249.ttf
+    - family: "QCF4_tajweed_250"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_250/QCF4_tajweed_250.ttf
+    - family: "QCF4_tajweed_251"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_251/QCF4_tajweed_251.ttf
+    - family: "QCF4_tajweed_252"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_252/QCF4_tajweed_252.ttf
+    - family: "QCF4_tajweed_253"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_253/QCF4_tajweed_253.ttf
+    - family: "QCF4_tajweed_254"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_254/QCF4_tajweed_254.ttf
+    - family: "QCF4_tajweed_255"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_255/QCF4_tajweed_255.ttf
+    - family: "QCF4_tajweed_256"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_256/QCF4_tajweed_256.ttf
+    - family: "QCF4_tajweed_257"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_257/QCF4_tajweed_257.ttf
+    - family: "QCF4_tajweed_258"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_258/QCF4_tajweed_258.ttf
+    - family: "QCF4_tajweed_259"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_259/QCF4_tajweed_259.ttf
+    - family: "QCF4_tajweed_260"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_260/QCF4_tajweed_260.ttf
+    - family: "QCF4_tajweed_261"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_261/QCF4_tajweed_261.ttf
+    - family: "QCF4_tajweed_262"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_262/QCF4_tajweed_262.ttf
+    - family: "QCF4_tajweed_263"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_263/QCF4_tajweed_263.ttf
+    - family: "QCF4_tajweed_264"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_264/QCF4_tajweed_264.ttf
+    - family: "QCF4_tajweed_265"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_265/QCF4_tajweed_265.ttf
+    - family: "QCF4_tajweed_266"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_266/QCF4_tajweed_266.ttf
+    - family: "QCF4_tajweed_267"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_267/QCF4_tajweed_267.ttf
+    - family: "QCF4_tajweed_268"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_268/QCF4_tajweed_268.ttf
+    - family: "QCF4_tajweed_269"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_269/QCF4_tajweed_269.ttf
+    - family: "QCF4_tajweed_270"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_270/QCF4_tajweed_270.ttf
+    - family: "QCF4_tajweed_271"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_271/QCF4_tajweed_271.ttf
+    - family: "QCF4_tajweed_272"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_272/QCF4_tajweed_272.ttf
+    - family: "QCF4_tajweed_273"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_273/QCF4_tajweed_273.ttf
+    - family: "QCF4_tajweed_274"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_274/QCF4_tajweed_274.ttf
+    - family: "QCF4_tajweed_275"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_275/QCF4_tajweed_275.ttf
+    - family: "QCF4_tajweed_276"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_276/QCF4_tajweed_276.ttf
+    - family: "QCF4_tajweed_277"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_277/QCF4_tajweed_277.ttf
+    - family: "QCF4_tajweed_278"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_278/QCF4_tajweed_278.ttf
+    - family: "QCF4_tajweed_279"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_279/QCF4_tajweed_279.ttf
+    - family: "QCF4_tajweed_280"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_280/QCF4_tajweed_280.ttf
+    - family: "QCF4_tajweed_281"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_281/QCF4_tajweed_281.ttf
+    - family: "QCF4_tajweed_282"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_282/QCF4_tajweed_282.ttf
+    - family: "QCF4_tajweed_283"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_283/QCF4_tajweed_283.ttf
+    - family: "QCF4_tajweed_284"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_284/QCF4_tajweed_284.ttf
+    - family: "QCF4_tajweed_285"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_285/QCF4_tajweed_285.ttf
+    - family: "QCF4_tajweed_286"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_286/QCF4_tajweed_286.ttf
+    - family: "QCF4_tajweed_287"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_287/QCF4_tajweed_287.ttf
+    - family: "QCF4_tajweed_288"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_288/QCF4_tajweed_288.ttf
+    - family: "QCF4_tajweed_289"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_289/QCF4_tajweed_289.ttf
+    - family: "QCF4_tajweed_290"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_290/QCF4_tajweed_290.ttf
+    - family: "QCF4_tajweed_291"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_291/QCF4_tajweed_291.ttf
+    - family: "QCF4_tajweed_292"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_292/QCF4_tajweed_292.ttf
+    - family: "QCF4_tajweed_293"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_293/QCF4_tajweed_293.ttf
+    - family: "QCF4_tajweed_294"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_294/QCF4_tajweed_294.ttf
+    - family: "QCF4_tajweed_295"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_295/QCF4_tajweed_295.ttf
+    - family: "QCF4_tajweed_296"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_296/QCF4_tajweed_296.ttf
+    - family: "QCF4_tajweed_297"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_297/QCF4_tajweed_297.ttf
+    - family: "QCF4_tajweed_298"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_298/QCF4_tajweed_298.ttf
+    - family: "QCF4_tajweed_299"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_299/QCF4_tajweed_299.ttf
+    - family: "QCF4_tajweed_300"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_300/QCF4_tajweed_300.ttf
+    - family: "QCF4_tajweed_301"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_301/QCF4_tajweed_301.ttf
+    - family: "QCF4_tajweed_302"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_302/QCF4_tajweed_302.ttf
+    - family: "QCF4_tajweed_303"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_303/QCF4_tajweed_303.ttf
+    - family: "QCF4_tajweed_304"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_304/QCF4_tajweed_304.ttf
+    - family: "QCF4_tajweed_305"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_305/QCF4_tajweed_305.ttf
+    - family: "QCF4_tajweed_306"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_306/QCF4_tajweed_306.ttf
+    - family: "QCF4_tajweed_307"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_307/QCF4_tajweed_307.ttf
+    - family: "QCF4_tajweed_308"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_308/QCF4_tajweed_308.ttf
+    - family: "QCF4_tajweed_309"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_309/QCF4_tajweed_309.ttf
+    - family: "QCF4_tajweed_310"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_310/QCF4_tajweed_310.ttf
+    - family: "QCF4_tajweed_311"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_311/QCF4_tajweed_311.ttf
+    - family: "QCF4_tajweed_312"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_312/QCF4_tajweed_312.ttf
+    - family: "QCF4_tajweed_313"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_313/QCF4_tajweed_313.ttf
+    - family: "QCF4_tajweed_314"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_314/QCF4_tajweed_314.ttf
+    - family: "QCF4_tajweed_315"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_315/QCF4_tajweed_315.ttf
+    - family: "QCF4_tajweed_316"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_316/QCF4_tajweed_316.ttf
+    - family: "QCF4_tajweed_317"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_317/QCF4_tajweed_317.ttf
+    - family: "QCF4_tajweed_318"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_318/QCF4_tajweed_318.ttf
+    - family: "QCF4_tajweed_319"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_319/QCF4_tajweed_319.ttf
+    - family: "QCF4_tajweed_320"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_320/QCF4_tajweed_320.ttf
+    - family: "QCF4_tajweed_321"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_321/QCF4_tajweed_321.ttf
+    - family: "QCF4_tajweed_322"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_322/QCF4_tajweed_322.ttf
+    - family: "QCF4_tajweed_323"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_323/QCF4_tajweed_323.ttf
+    - family: "QCF4_tajweed_324"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_324/QCF4_tajweed_324.ttf
+    - family: "QCF4_tajweed_325"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_325/QCF4_tajweed_325.ttf
+    - family: "QCF4_tajweed_326"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_326/QCF4_tajweed_326.ttf
+    - family: "QCF4_tajweed_327"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_327/QCF4_tajweed_327.ttf
+    - family: "QCF4_tajweed_328"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_328/QCF4_tajweed_328.ttf
+    - family: "QCF4_tajweed_329"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_329/QCF4_tajweed_329.ttf
+    - family: "QCF4_tajweed_330"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_330/QCF4_tajweed_330.ttf
+    - family: "QCF4_tajweed_331"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_331/QCF4_tajweed_331.ttf
+    - family: "QCF4_tajweed_332"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_332/QCF4_tajweed_332.ttf
+    - family: "QCF4_tajweed_333"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_333/QCF4_tajweed_333.ttf
+    - family: "QCF4_tajweed_334"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_334/QCF4_tajweed_334.ttf
+    - family: "QCF4_tajweed_335"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_335/QCF4_tajweed_335.ttf
+    - family: "QCF4_tajweed_336"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_336/QCF4_tajweed_336.ttf
+    - family: "QCF4_tajweed_337"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_337/QCF4_tajweed_337.ttf
+    - family: "QCF4_tajweed_338"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_338/QCF4_tajweed_338.ttf
+    - family: "QCF4_tajweed_339"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_339/QCF4_tajweed_339.ttf
+    - family: "QCF4_tajweed_340"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_340/QCF4_tajweed_340.ttf
+    - family: "QCF4_tajweed_341"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_341/QCF4_tajweed_341.ttf
+    - family: "QCF4_tajweed_342"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_342/QCF4_tajweed_342.ttf
+    - family: "QCF4_tajweed_343"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_343/QCF4_tajweed_343.ttf
+    - family: "QCF4_tajweed_344"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_344/QCF4_tajweed_344.ttf
+    - family: "QCF4_tajweed_345"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_345/QCF4_tajweed_345.ttf
+    - family: "QCF4_tajweed_346"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_346/QCF4_tajweed_346.ttf
+    - family: "QCF4_tajweed_347"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_347/QCF4_tajweed_347.ttf
+    - family: "QCF4_tajweed_348"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_348/QCF4_tajweed_348.ttf
+    - family: "QCF4_tajweed_349"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_349/QCF4_tajweed_349.ttf
+    - family: "QCF4_tajweed_350"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_350/QCF4_tajweed_350.ttf
+    - family: "QCF4_tajweed_351"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_351/QCF4_tajweed_351.ttf
+    - family: "QCF4_tajweed_352"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_352/QCF4_tajweed_352.ttf
+    - family: "QCF4_tajweed_353"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_353/QCF4_tajweed_353.ttf
+    - family: "QCF4_tajweed_354"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_354/QCF4_tajweed_354.ttf
+    - family: "QCF4_tajweed_355"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_355/QCF4_tajweed_355.ttf
+    - family: "QCF4_tajweed_356"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_356/QCF4_tajweed_356.ttf
+    - family: "QCF4_tajweed_357"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_357/QCF4_tajweed_357.ttf
+    - family: "QCF4_tajweed_358"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_358/QCF4_tajweed_358.ttf
+    - family: "QCF4_tajweed_359"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_359/QCF4_tajweed_359.ttf
+    - family: "QCF4_tajweed_360"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_360/QCF4_tajweed_360.ttf
+    - family: "QCF4_tajweed_361"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_361/QCF4_tajweed_361.ttf
+    - family: "QCF4_tajweed_362"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_362/QCF4_tajweed_362.ttf
+    - family: "QCF4_tajweed_363"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_363/QCF4_tajweed_363.ttf
+    - family: "QCF4_tajweed_364"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_364/QCF4_tajweed_364.ttf
+    - family: "QCF4_tajweed_365"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_365/QCF4_tajweed_365.ttf
+    - family: "QCF4_tajweed_366"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_366/QCF4_tajweed_366.ttf
+    - family: "QCF4_tajweed_367"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_367/QCF4_tajweed_367.ttf
+    - family: "QCF4_tajweed_368"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_368/QCF4_tajweed_368.ttf
+    - family: "QCF4_tajweed_369"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_369/QCF4_tajweed_369.ttf
+    - family: "QCF4_tajweed_370"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_370/QCF4_tajweed_370.ttf
+    - family: "QCF4_tajweed_371"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_371/QCF4_tajweed_371.ttf
+    - family: "QCF4_tajweed_372"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_372/QCF4_tajweed_372.ttf
+    - family: "QCF4_tajweed_373"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_373/QCF4_tajweed_373.ttf
+    - family: "QCF4_tajweed_374"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_374/QCF4_tajweed_374.ttf
+    - family: "QCF4_tajweed_375"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_375/QCF4_tajweed_375.ttf
+    - family: "QCF4_tajweed_376"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_376/QCF4_tajweed_376.ttf
+    - family: "QCF4_tajweed_377"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_377/QCF4_tajweed_377.ttf
+    - family: "QCF4_tajweed_378"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_378/QCF4_tajweed_378.ttf
+    - family: "QCF4_tajweed_379"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_379/QCF4_tajweed_379.ttf
+    - family: "QCF4_tajweed_380"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_380/QCF4_tajweed_380.ttf
+    - family: "QCF4_tajweed_381"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_381/QCF4_tajweed_381.ttf
+    - family: "QCF4_tajweed_382"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_382/QCF4_tajweed_382.ttf
+    - family: "QCF4_tajweed_383"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_383/QCF4_tajweed_383.ttf
+    - family: "QCF4_tajweed_384"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_384/QCF4_tajweed_384.ttf
+    - family: "QCF4_tajweed_385"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_385/QCF4_tajweed_385.ttf
+    - family: "QCF4_tajweed_386"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_386/QCF4_tajweed_386.ttf
+    - family: "QCF4_tajweed_387"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_387/QCF4_tajweed_387.ttf
+    - family: "QCF4_tajweed_388"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_388/QCF4_tajweed_388.ttf
+    - family: "QCF4_tajweed_389"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_389/QCF4_tajweed_389.ttf
+    - family: "QCF4_tajweed_390"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_390/QCF4_tajweed_390.ttf
+    - family: "QCF4_tajweed_391"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_391/QCF4_tajweed_391.ttf
+    - family: "QCF4_tajweed_392"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_392/QCF4_tajweed_392.ttf
+    - family: "QCF4_tajweed_393"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_393/QCF4_tajweed_393.ttf
+    - family: "QCF4_tajweed_394"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_394/QCF4_tajweed_394.ttf
+    - family: "QCF4_tajweed_395"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_395/QCF4_tajweed_395.ttf
+    - family: "QCF4_tajweed_396"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_396/QCF4_tajweed_396.ttf
+    - family: "QCF4_tajweed_397"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_397/QCF4_tajweed_397.ttf
+    - family: "QCF4_tajweed_398"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_398/QCF4_tajweed_398.ttf
+    - family: "QCF4_tajweed_399"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_399/QCF4_tajweed_399.ttf
+    - family: "QCF4_tajweed_400"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_400/QCF4_tajweed_400.ttf
+    - family: "QCF4_tajweed_401"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_401/QCF4_tajweed_401.ttf
+    - family: "QCF4_tajweed_402"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_402/QCF4_tajweed_402.ttf
+    - family: "QCF4_tajweed_403"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_403/QCF4_tajweed_403.ttf
+    - family: "QCF4_tajweed_404"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_404/QCF4_tajweed_404.ttf
+    - family: "QCF4_tajweed_405"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_405/QCF4_tajweed_405.ttf
+    - family: "QCF4_tajweed_406"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_406/QCF4_tajweed_406.ttf
+    - family: "QCF4_tajweed_407"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_407/QCF4_tajweed_407.ttf
+    - family: "QCF4_tajweed_408"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_408/QCF4_tajweed_408.ttf
+    - family: "QCF4_tajweed_409"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_409/QCF4_tajweed_409.ttf
+    - family: "QCF4_tajweed_410"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_410/QCF4_tajweed_410.ttf
+    - family: "QCF4_tajweed_411"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_411/QCF4_tajweed_411.ttf
+    - family: "QCF4_tajweed_412"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_412/QCF4_tajweed_412.ttf
+    - family: "QCF4_tajweed_413"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_413/QCF4_tajweed_413.ttf
+    - family: "QCF4_tajweed_414"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_414/QCF4_tajweed_414.ttf
+    - family: "QCF4_tajweed_415"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_415/QCF4_tajweed_415.ttf
+    - family: "QCF4_tajweed_416"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_416/QCF4_tajweed_416.ttf
+    - family: "QCF4_tajweed_417"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_417/QCF4_tajweed_417.ttf
+    - family: "QCF4_tajweed_418"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_418/QCF4_tajweed_418.ttf
+    - family: "QCF4_tajweed_419"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_419/QCF4_tajweed_419.ttf
+    - family: "QCF4_tajweed_420"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_420/QCF4_tajweed_420.ttf
+    - family: "QCF4_tajweed_421"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_421/QCF4_tajweed_421.ttf
+    - family: "QCF4_tajweed_422"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_422/QCF4_tajweed_422.ttf
+    - family: "QCF4_tajweed_423"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_423/QCF4_tajweed_423.ttf
+    - family: "QCF4_tajweed_424"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_424/QCF4_tajweed_424.ttf
+    - family: "QCF4_tajweed_425"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_425/QCF4_tajweed_425.ttf
+    - family: "QCF4_tajweed_426"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_426/QCF4_tajweed_426.ttf
+    - family: "QCF4_tajweed_427"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_427/QCF4_tajweed_427.ttf
+    - family: "QCF4_tajweed_428"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_428/QCF4_tajweed_428.ttf
+    - family: "QCF4_tajweed_429"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_429/QCF4_tajweed_429.ttf
+    - family: "QCF4_tajweed_430"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_430/QCF4_tajweed_430.ttf
+    - family: "QCF4_tajweed_431"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_431/QCF4_tajweed_431.ttf
+    - family: "QCF4_tajweed_432"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_432/QCF4_tajweed_432.ttf
+    - family: "QCF4_tajweed_433"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_433/QCF4_tajweed_433.ttf
+    - family: "QCF4_tajweed_434"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_434/QCF4_tajweed_434.ttf
+    - family: "QCF4_tajweed_435"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_435/QCF4_tajweed_435.ttf
+    - family: "QCF4_tajweed_436"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_436/QCF4_tajweed_436.ttf
+    - family: "QCF4_tajweed_437"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_437/QCF4_tajweed_437.ttf
+    - family: "QCF4_tajweed_438"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_438/QCF4_tajweed_438.ttf
+    - family: "QCF4_tajweed_439"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_439/QCF4_tajweed_439.ttf
+    - family: "QCF4_tajweed_440"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_440/QCF4_tajweed_440.ttf
+    - family: "QCF4_tajweed_441"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_441/QCF4_tajweed_441.ttf
+    - family: "QCF4_tajweed_442"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_442/QCF4_tajweed_442.ttf
+    - family: "QCF4_tajweed_443"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_443/QCF4_tajweed_443.ttf
+    - family: "QCF4_tajweed_444"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_444/QCF4_tajweed_444.ttf
+    - family: "QCF4_tajweed_445"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_445/QCF4_tajweed_445.ttf
+    - family: "QCF4_tajweed_446"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_446/QCF4_tajweed_446.ttf
+    - family: "QCF4_tajweed_447"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_447/QCF4_tajweed_447.ttf
+    - family: "QCF4_tajweed_448"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_448/QCF4_tajweed_448.ttf
+    - family: "QCF4_tajweed_449"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_449/QCF4_tajweed_449.ttf
+    - family: "QCF4_tajweed_450"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_450/QCF4_tajweed_450.ttf
+    - family: "QCF4_tajweed_451"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_451/QCF4_tajweed_451.ttf
+    - family: "QCF4_tajweed_452"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_452/QCF4_tajweed_452.ttf
+    - family: "QCF4_tajweed_453"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_453/QCF4_tajweed_453.ttf
+    - family: "QCF4_tajweed_454"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_454/QCF4_tajweed_454.ttf
+    - family: "QCF4_tajweed_455"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_455/QCF4_tajweed_455.ttf
+    - family: "QCF4_tajweed_456"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_456/QCF4_tajweed_456.ttf
+    - family: "QCF4_tajweed_457"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_457/QCF4_tajweed_457.ttf
+    - family: "QCF4_tajweed_458"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_458/QCF4_tajweed_458.ttf
+    - family: "QCF4_tajweed_459"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_459/QCF4_tajweed_459.ttf
+    - family: "QCF4_tajweed_460"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_460/QCF4_tajweed_460.ttf
+    - family: "QCF4_tajweed_461"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_461/QCF4_tajweed_461.ttf
+    - family: "QCF4_tajweed_462"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_462/QCF4_tajweed_462.ttf
+    - family: "QCF4_tajweed_463"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_463/QCF4_tajweed_463.ttf
+    - family: "QCF4_tajweed_464"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_464/QCF4_tajweed_464.ttf
+    - family: "QCF4_tajweed_465"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_465/QCF4_tajweed_465.ttf
+    - family: "QCF4_tajweed_466"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_466/QCF4_tajweed_466.ttf
+    - family: "QCF4_tajweed_467"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_467/QCF4_tajweed_467.ttf
+    - family: "QCF4_tajweed_468"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_468/QCF4_tajweed_468.ttf
+    - family: "QCF4_tajweed_469"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_469/QCF4_tajweed_469.ttf
+    - family: "QCF4_tajweed_470"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_470/QCF4_tajweed_470.ttf
+    - family: "QCF4_tajweed_471"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_471/QCF4_tajweed_471.ttf
+    - family: "QCF4_tajweed_472"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_472/QCF4_tajweed_472.ttf
+    - family: "QCF4_tajweed_473"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_473/QCF4_tajweed_473.ttf
+    - family: "QCF4_tajweed_474"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_474/QCF4_tajweed_474.ttf
+    - family: "QCF4_tajweed_475"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_475/QCF4_tajweed_475.ttf
+    - family: "QCF4_tajweed_476"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_476/QCF4_tajweed_476.ttf
+    - family: "QCF4_tajweed_477"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_477/QCF4_tajweed_477.ttf
+    - family: "QCF4_tajweed_478"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_478/QCF4_tajweed_478.ttf
+    - family: "QCF4_tajweed_479"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_479/QCF4_tajweed_479.ttf
+    - family: "QCF4_tajweed_480"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_480/QCF4_tajweed_480.ttf
+    - family: "QCF4_tajweed_481"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_481/QCF4_tajweed_481.ttf
+    - family: "QCF4_tajweed_482"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_482/QCF4_tajweed_482.ttf
+    - family: "QCF4_tajweed_483"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_483/QCF4_tajweed_483.ttf
+    - family: "QCF4_tajweed_484"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_484/QCF4_tajweed_484.ttf
+    - family: "QCF4_tajweed_485"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_485/QCF4_tajweed_485.ttf
+    - family: "QCF4_tajweed_486"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_486/QCF4_tajweed_486.ttf
+    - family: "QCF4_tajweed_487"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_487/QCF4_tajweed_487.ttf
+    - family: "QCF4_tajweed_488"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_488/QCF4_tajweed_488.ttf
+    - family: "QCF4_tajweed_489"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_489/QCF4_tajweed_489.ttf
+    - family: "QCF4_tajweed_490"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_490/QCF4_tajweed_490.ttf
+    - family: "QCF4_tajweed_491"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_491/QCF4_tajweed_491.ttf
+    - family: "QCF4_tajweed_492"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_492/QCF4_tajweed_492.ttf
+    - family: "QCF4_tajweed_493"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_493/QCF4_tajweed_493.ttf
+    - family: "QCF4_tajweed_494"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_494/QCF4_tajweed_494.ttf
+    - family: "QCF4_tajweed_495"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_495/QCF4_tajweed_495.ttf
+    - family: "QCF4_tajweed_496"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_496/QCF4_tajweed_496.ttf
+    - family: "QCF4_tajweed_497"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_497/QCF4_tajweed_497.ttf
+    - family: "QCF4_tajweed_498"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_498/QCF4_tajweed_498.ttf
+    - family: "QCF4_tajweed_499"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_499/QCF4_tajweed_499.ttf
+    - family: "QCF4_tajweed_500"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_500/QCF4_tajweed_500.ttf
+    - family: "QCF4_tajweed_501"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_501/QCF4_tajweed_501.ttf
+    - family: "QCF4_tajweed_502"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_502/QCF4_tajweed_502.ttf
+    - family: "QCF4_tajweed_503"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_503/QCF4_tajweed_503.ttf
+    - family: "QCF4_tajweed_504"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_504/QCF4_tajweed_504.ttf
+    - family: "QCF4_tajweed_505"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_505/QCF4_tajweed_505.ttf
+    - family: "QCF4_tajweed_506"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_506/QCF4_tajweed_506.ttf
+    - family: "QCF4_tajweed_507"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_507/QCF4_tajweed_507.ttf
+    - family: "QCF4_tajweed_508"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_508/QCF4_tajweed_508.ttf
+    - family: "QCF4_tajweed_509"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_509/QCF4_tajweed_509.ttf
+    - family: "QCF4_tajweed_510"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_510/QCF4_tajweed_510.ttf
+    - family: "QCF4_tajweed_511"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_511/QCF4_tajweed_511.ttf
+    - family: "QCF4_tajweed_512"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_512/QCF4_tajweed_512.ttf
+    - family: "QCF4_tajweed_513"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_513/QCF4_tajweed_513.ttf
+    - family: "QCF4_tajweed_514"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_514/QCF4_tajweed_514.ttf
+    - family: "QCF4_tajweed_515"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_515/QCF4_tajweed_515.ttf
+    - family: "QCF4_tajweed_516"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_516/QCF4_tajweed_516.ttf
+    - family: "QCF4_tajweed_517"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_517/QCF4_tajweed_517.ttf
+    - family: "QCF4_tajweed_518"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_518/QCF4_tajweed_518.ttf
+    - family: "QCF4_tajweed_519"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_519/QCF4_tajweed_519.ttf
+    - family: "QCF4_tajweed_520"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_520/QCF4_tajweed_520.ttf
+    - family: "QCF4_tajweed_521"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_521/QCF4_tajweed_521.ttf
+    - family: "QCF4_tajweed_522"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_522/QCF4_tajweed_522.ttf
+    - family: "QCF4_tajweed_523"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_523/QCF4_tajweed_523.ttf
+    - family: "QCF4_tajweed_524"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_524/QCF4_tajweed_524.ttf
+    - family: "QCF4_tajweed_525"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_525/QCF4_tajweed_525.ttf
+    - family: "QCF4_tajweed_526"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_526/QCF4_tajweed_526.ttf
+    - family: "QCF4_tajweed_527"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_527/QCF4_tajweed_527.ttf
+    - family: "QCF4_tajweed_528"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_528/QCF4_tajweed_528.ttf
+    - family: "QCF4_tajweed_529"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_529/QCF4_tajweed_529.ttf
+    - family: "QCF4_tajweed_530"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_530/QCF4_tajweed_530.ttf
+    - family: "QCF4_tajweed_531"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_531/QCF4_tajweed_531.ttf
+    - family: "QCF4_tajweed_532"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_532/QCF4_tajweed_532.ttf
+    - family: "QCF4_tajweed_533"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_533/QCF4_tajweed_533.ttf
+    - family: "QCF4_tajweed_534"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_534/QCF4_tajweed_534.ttf
+    - family: "QCF4_tajweed_535"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_535/QCF4_tajweed_535.ttf
+    - family: "QCF4_tajweed_536"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_536/QCF4_tajweed_536.ttf
+    - family: "QCF4_tajweed_537"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_537/QCF4_tajweed_537.ttf
+    - family: "QCF4_tajweed_538"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_538/QCF4_tajweed_538.ttf
+    - family: "QCF4_tajweed_539"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_539/QCF4_tajweed_539.ttf
+    - family: "QCF4_tajweed_540"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_540/QCF4_tajweed_540.ttf
+    - family: "QCF4_tajweed_541"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_541/QCF4_tajweed_541.ttf
+    - family: "QCF4_tajweed_542"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_542/QCF4_tajweed_542.ttf
+    - family: "QCF4_tajweed_543"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_543/QCF4_tajweed_543.ttf
+    - family: "QCF4_tajweed_544"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_544/QCF4_tajweed_544.ttf
+    - family: "QCF4_tajweed_545"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_545/QCF4_tajweed_545.ttf
+    - family: "QCF4_tajweed_546"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_546/QCF4_tajweed_546.ttf
+    - family: "QCF4_tajweed_547"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_547/QCF4_tajweed_547.ttf
+    - family: "QCF4_tajweed_548"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_548/QCF4_tajweed_548.ttf
+    - family: "QCF4_tajweed_549"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_549/QCF4_tajweed_549.ttf
+    - family: "QCF4_tajweed_550"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_550/QCF4_tajweed_550.ttf
+    - family: "QCF4_tajweed_551"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_551/QCF4_tajweed_551.ttf
+    - family: "QCF4_tajweed_552"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_552/QCF4_tajweed_552.ttf
+    - family: "QCF4_tajweed_553"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_553/QCF4_tajweed_553.ttf
+    - family: "QCF4_tajweed_554"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_554/QCF4_tajweed_554.ttf
+    - family: "QCF4_tajweed_555"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_555/QCF4_tajweed_555.ttf
+    - family: "QCF4_tajweed_556"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_556/QCF4_tajweed_556.ttf
+    - family: "QCF4_tajweed_557"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_557/QCF4_tajweed_557.ttf
+    - family: "QCF4_tajweed_558"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_558/QCF4_tajweed_558.ttf
+    - family: "QCF4_tajweed_559"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_559/QCF4_tajweed_559.ttf
+    - family: "QCF4_tajweed_560"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_560/QCF4_tajweed_560.ttf
+    - family: "QCF4_tajweed_561"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_561/QCF4_tajweed_561.ttf
+    - family: "QCF4_tajweed_562"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_562/QCF4_tajweed_562.ttf
+    - family: "QCF4_tajweed_563"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_563/QCF4_tajweed_563.ttf
+    - family: "QCF4_tajweed_564"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_564/QCF4_tajweed_564.ttf
+    - family: "QCF4_tajweed_565"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_565/QCF4_tajweed_565.ttf
+    - family: "QCF4_tajweed_566"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_566/QCF4_tajweed_566.ttf
+    - family: "QCF4_tajweed_567"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_567/QCF4_tajweed_567.ttf
+    - family: "QCF4_tajweed_568"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_568/QCF4_tajweed_568.ttf
+    - family: "QCF4_tajweed_569"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_569/QCF4_tajweed_569.ttf
+    - family: "QCF4_tajweed_570"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_570/QCF4_tajweed_570.ttf
+    - family: "QCF4_tajweed_571"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_571/QCF4_tajweed_571.ttf
+    - family: "QCF4_tajweed_572"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_572/QCF4_tajweed_572.ttf
+    - family: "QCF4_tajweed_573"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_573/QCF4_tajweed_573.ttf
+    - family: "QCF4_tajweed_574"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_574/QCF4_tajweed_574.ttf
+    - family: "QCF4_tajweed_575"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_575/QCF4_tajweed_575.ttf
+    - family: "QCF4_tajweed_576"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_576/QCF4_tajweed_576.ttf
+    - family: "QCF4_tajweed_577"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_577/QCF4_tajweed_577.ttf
+    - family: "QCF4_tajweed_578"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_578/QCF4_tajweed_578.ttf
+    - family: "QCF4_tajweed_579"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_579/QCF4_tajweed_579.ttf
+    - family: "QCF4_tajweed_580"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_580/QCF4_tajweed_580.ttf
+    - family: "QCF4_tajweed_581"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_581/QCF4_tajweed_581.ttf
+    - family: "QCF4_tajweed_582"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_582/QCF4_tajweed_582.ttf
+    - family: "QCF4_tajweed_583"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_583/QCF4_tajweed_583.ttf
+    - family: "QCF4_tajweed_584"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_584/QCF4_tajweed_584.ttf
+    - family: "QCF4_tajweed_585"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_585/QCF4_tajweed_585.ttf
+    - family: "QCF4_tajweed_586"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_586/QCF4_tajweed_586.ttf
+    - family: "QCF4_tajweed_587"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_587/QCF4_tajweed_587.ttf
+    - family: "QCF4_tajweed_588"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_588/QCF4_tajweed_588.ttf
+    - family: "QCF4_tajweed_589"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_589/QCF4_tajweed_589.ttf
+    - family: "QCF4_tajweed_590"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_590/QCF4_tajweed_590.ttf
+    - family: "QCF4_tajweed_591"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_591/QCF4_tajweed_591.ttf
+    - family: "QCF4_tajweed_592"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_592/QCF4_tajweed_592.ttf
+    - family: "QCF4_tajweed_593"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_593/QCF4_tajweed_593.ttf
+    - family: "QCF4_tajweed_594"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_594/QCF4_tajweed_594.ttf
+    - family: "QCF4_tajweed_595"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_595/QCF4_tajweed_595.ttf
+    - family: "QCF4_tajweed_596"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_596/QCF4_tajweed_596.ttf
+    - family: "QCF4_tajweed_597"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_597/QCF4_tajweed_597.ttf
+    - family: "QCF4_tajweed_598"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_598/QCF4_tajweed_598.ttf
+    - family: "QCF4_tajweed_599"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_599/QCF4_tajweed_599.ttf
+    - family: "QCF4_tajweed_600"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_600/QCF4_tajweed_600.ttf
+    - family: "QCF4_tajweed_601"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_601/QCF4_tajweed_601.ttf
+    - family: "QCF4_tajweed_602"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_602/QCF4_tajweed_602.ttf
+    - family: "QCF4_tajweed_603"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_603/QCF4_tajweed_603.ttf
+    - family: "QCF4_tajweed_604"
+      fonts:
+        - asset: assets/fonts/QCF4_tajweed_604/QCF4_tajweed_604.ttf
+
+  #
+  # For details regarding fonts in packages, see
+  # https://flutter.dev/to/font-from-package
