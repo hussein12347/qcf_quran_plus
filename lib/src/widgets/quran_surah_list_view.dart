@@ -5,6 +5,7 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import '../../qcf_quran_plus.dart';
 import '../data/quran_data.dart';
 import '../models/highlight_verse.dart';
+import '../utils/font_loader_service.dart'; // Ensure this points to your Font Loader
 import 'bsmallah_widget.dart';
 import 'surah_header_widget.dart';
 
@@ -141,117 +142,132 @@ class QuranSurahListView extends StatelessWidget {
           final int verseNumber = ayahData['aya_no'];
           final int pageNumber = ayahData['page'];
 
-          // Clean the Othmanic text: remove newlines and normalize whitespace
-          final String othmanicText = ayahData['qcfData']
-              .toString()
-              .replaceAll('\n', '')
-              .replaceAll(RegExp(r'\s+'), ' ')
-              .trimRight();
+          // Fire and forget: Preload fonts for nearby pages as the user scrolls
+          QcfFontLoader.preloadNearbyPages(pageNumber);
 
-          // 2. Process text and isolate the Ayah number glyph
-          String glyph = getaya_noQCF(surahNumber, verseNumber);
-          String textWithoutGlyph = othmanicText;
-          bool hasGlyph = othmanicText.endsWith(glyph);
+          // Use FutureBuilder to wait for the font to load for this specific Ayah's page
+          return FutureBuilder<void>(
+            future: QcfFontLoader.loadFont(pageNumber),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                // Return a simple loading state while the font extracts to avoid layout jumping
+                SizedBox(
+                );
+              }
 
-          if (hasGlyph) {
-            textWithoutGlyph = othmanicText.substring(0, othmanicText.length - glyph.length);
-          }
+              // Clean the Othmanic text: remove newlines and normalize whitespace
+              final String othmanicText = ayahData['qcfData']
+                  .toString()
+                  .replaceAll('\n', '')
+                  .replaceAll(RegExp(r'\s+'), ' ')
+                  .trimRight();
 
-          // 3. Prepare text styles for the body and the verse number
-          final defaultStyle = ayahStyle ??
-              QuranTextStyles.qcfStyle(
-                height: 1.5,
-                pageNumber: pageNumber,
-              );
+              // 2. Process text and isolate the Ayah number glyph
+              String glyph = getaya_noQCF(surahNumber, verseNumber);
+              String textWithoutGlyph = othmanicText;
+              bool hasGlyph = othmanicText.endsWith(glyph);
 
-          TextStyle mainTextStyle = defaultStyle.copyWith(height: null, fontSize: fontSize);
-          if (textFilter != null) {
-            mainTextStyle = mainTextStyle.copyWith(color: null).merge(
-              TextStyle(
-                foreground: Paint()..colorFilter = textFilter,
-              ),
-            );
-          }
+              if (hasGlyph) {
+                textWithoutGlyph = othmanicText.substring(0, othmanicText.length - glyph.length);
+              }
 
-          TextStyle numberTextStyle = defaultStyle.copyWith(height: null);
-          if (isDarkMode) {
-            // Apply matrix inversion to the verse number glyph in Dark Mode
-            numberTextStyle = numberTextStyle.copyWith(color: null).merge(
-              TextStyle(
-                foreground: Paint()
-                  ..colorFilter = const ColorFilter.matrix([
-                    -1, 0, 0, 0, 255,
-                    0, -1, 0, 0, 255,
-                    0, 0, -1, 0, 255,
-                    0, 0, 0, 1, 0,
-                  ]),
-              ),
-            );
-          } else {
-            // Use the app's primary color for verse numbers in Light Mode
-            numberTextStyle = numberTextStyle.copyWith(
-              color: Theme.of(context).primaryColor,
-              foreground: null,
-            );
-          }
+              // 3. Prepare text styles for the body and the verse number
+              final defaultStyle = ayahStyle ??
+                  QuranTextStyles.qcfStyle(
+                    height: 1.45,
+                    pageNumber: pageNumber,
+                  );
 
-          Widget preBuiltAyahWidget = RichText(
-            textAlign: TextAlign.right,
-            textDirection: TextDirection.rtl,
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: textWithoutGlyph,
-                  style: mainTextStyle,
-                ),
-                if (hasGlyph)
-                  TextSpan(
-                    text: glyph,
-                    style: numberTextStyle,
+              TextStyle mainTextStyle = defaultStyle.copyWith(height: null, fontSize: fontSize);
+              if (textFilter != null) {
+                mainTextStyle = mainTextStyle.copyWith(color: null).merge(
+                  TextStyle(
+                    foreground: Paint()..colorFilter = textFilter,
                   ),
-              ],
-            ),
-          );
+                );
+              }
 
-          // Reactive builder for performant verse highlighting during audio playback or selection
-          return ValueListenableBuilder<List<HighlightVerse>>(
-            valueListenable: highlightsNotifier,
-            builder: (context, highlights, _) {
-              final isHighlighted = highlights.any(
-                    (h) => h.surah == surahNumber && h.verseNumber == verseNumber,
+              TextStyle numberTextStyle = defaultStyle.copyWith(height: null);
+              if (isDarkMode) {
+                // Apply matrix inversion to the verse number glyph in Dark Mode
+                numberTextStyle = numberTextStyle.copyWith(color: null).merge(
+                  TextStyle(
+                    foreground: Paint()
+                      ..colorFilter = const ColorFilter.matrix([
+                        -1, 0, 0, 0, 255,
+                        0, -1, 0, 0, 255,
+                        0, 0, -1, 0, 255,
+                        0, 0, 0, 1, 0,
+                      ]),
+                  ),
+                );
+              } else {
+                // Use the app's primary color for verse numbers in Light Mode
+                numberTextStyle = numberTextStyle.copyWith(
+                  color: Theme.of(context).primaryColor,
+                  foreground: null,
+                );
+              }
+
+              Widget preBuiltAyahWidget = RichText(
+                textAlign: TextAlign.right,
+                textDirection: TextDirection.rtl,
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: textWithoutGlyph,
+                      style: mainTextStyle,
+                    ),
+                    if (hasGlyph)
+                      TextSpan(
+                        text: glyph,
+                        style: numberTextStyle,
+                      ),
+                  ],
+                ),
               );
-              final highlightColor = isHighlighted
-                  ? highlights
-                  .firstWhere(
-                    (h) => h.surah == surahNumber && h.verseNumber == verseNumber,
-              )
-                  .color
-                  : Colors.transparent;
 
-              return GestureDetector(
-                onLongPressStart: (details) {
-                  onLongPress?.call(surahNumber, verseNumber, details);
+              // Reactive builder for performant verse highlighting during audio playback or selection
+              return ValueListenableBuilder<List<HighlightVerse>>(
+                valueListenable: highlightsNotifier,
+                builder: (context, highlights, _) {
+                  final isHighlighted = highlights.any(
+                        (h) => h.surah == surahNumber && h.verseNumber == verseNumber,
+                  );
+                  final highlightColor = isHighlighted
+                      ? highlights
+                      .firstWhere(
+                        (h) => h.surah == surahNumber && h.verseNumber == verseNumber,
+                  )
+                      .color
+                      : Colors.transparent;
+
+                  return GestureDetector(
+                    onLongPressStart: (details) {
+                      onLongPress?.call(surahNumber, verseNumber, details);
+                    },
+                    child: ayahBuilder != null
+                        ? ayahBuilder!(
+                      context,
+                      surahNumber,
+                      verseNumber,
+                      pageNumber,
+                      preBuiltAyahWidget,
+                      isHighlighted,
+                      highlightColor,
+                    )
+                        : Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: isHighlighted ? highlightColor.withAlpha(76) : Colors.transparent,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: preBuiltAyahWidget,
+                    ),
+                  );
                 },
-                child: ayahBuilder != null
-                    ? ayahBuilder!(
-                  context,
-                  surahNumber,
-                  verseNumber,
-                  pageNumber,
-                  preBuiltAyahWidget,
-                  isHighlighted,
-                  highlightColor,
-                )
-                    : Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: isHighlighted ? highlightColor.withAlpha(76) : Colors.transparent,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: preBuiltAyahWidget,
-                ),
               );
             },
           );

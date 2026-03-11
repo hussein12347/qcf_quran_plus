@@ -4,10 +4,9 @@ import 'package:flutter/material.dart';
 import '../../qcf_quran_plus.dart';
 import '../models/highlight_verse.dart';
 import '../models/quran_page.dart';
+import '../utils/font_loader_service.dart';
 
-/// A widget that renders a single line of the Quran with support for
-/// Tajweed color filtering, highlighting, and RTL alignment.
-class QuranLine extends StatelessWidget {
+class QuranLine extends StatefulWidget {
   const QuranLine(
       this.line,
       this.bookmarks, {
@@ -23,7 +22,6 @@ class QuranLine extends StatelessWidget {
   final List<HighlightVerse> bookmarks;
   final BoxFit boxFit;
 
-  /// Callback triggered when an Ayah is long-pressed.
   final void Function(
       int surahNumber,
       int verseNumber,
@@ -35,83 +33,85 @@ class QuranLine extends StatelessWidget {
   final bool isDark;
 
   @override
+  State<QuranLine> createState() => _QuranLineState();
+}
+
+class _QuranLineState extends State<QuranLine> {
+  bool _fontLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFont();
+  }
+
+  void _loadFont() async {
+    int page = widget.line.ayahs.first.page;
+
+    await QcfFontLoader.loadFont(page);
+
+    if (mounted) {
+      setState(() {
+        _fontLoaded = true;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // Initialize default style using the specific page font
     final defaultStyle = QuranTextStyles.qcfStyle(
       fontSize: 23.55,
       height: 1.45,
-      pageNumber: line.ayahs.first.page,
+      pageNumber: widget.line.ayahs.first.page,
     );
 
     final finalStyle =
-    ayahStyle != null ? defaultStyle.merge(ayahStyle) : defaultStyle;
+    widget.ayahStyle != null ? defaultStyle.merge(widget.ayahStyle) : defaultStyle;
 
     ColorFilter? textFilter;
 
-    // Define color filtering logic:
-    // Tajweed fonts use specific colors that must be inverted manually in dark mode
-    // using a Color Matrix to preserve the Tajweed color coding.
-    if (isDark && isTajweed) {
+    if (widget.isDark && widget.isTajweed) {
       textFilter = const ColorFilter.matrix([
         -1, 0, 0, 0, 255,
         0, -1, 0, 0, 255,
         0, 0, -1, 0, 255,
         0, 0, 0, 1, 0,
       ]);
-    } else if (isDark && !isTajweed) {
-      textFilter = const ColorFilter.mode(
-        Colors.white,
-        BlendMode.srcIn,
-      );
-    } else if (!isDark && !isTajweed) {
-      textFilter = const ColorFilter.mode(
-        Colors.black,
-        BlendMode.srcIn,
-      );
+    } else if (widget.isDark && !widget.isTajweed) {
+      textFilter = const ColorFilter.mode(Colors.white, BlendMode.srcIn);
+    } else if (!widget.isDark && !widget.isTajweed) {
+      textFilter = const ColorFilter.mode(Colors.black, BlendMode.srcIn);
     }
 
     Widget textWidget = RichText(
       text: TextSpan(
-        children: line.ayahs.reversed.map((ayah) {
-          final highlight = bookmarks.firstWhere(
+        children: widget.line.ayahs.reversed.map((ayah) {
+          final highlight = widget.bookmarks.firstWhere(
                 (h) => h.surah == ayah.surahNumber && h.verseNumber == ayah.ayahNumber,
-            orElse: () => HighlightVerse(
-              surah: 0,
-              verseNumber: 0,
-              page: 0,
-              color: Colors.transparent,
-            ),
+            orElse: () => HighlightVerse(surah: 0, verseNumber: 0, page: 0, color: Colors.transparent),
           );
 
           bool isHighlighted = highlight.color != Colors.transparent;
 
-          // Extract and clean the QCF text data
           String currentQcfText = ayah.qcfData.trimRight();
           String glyph = getaya_noQCF(ayah.surahNumber, ayah.ayahNumber);
-
           String textWithoutGlyph = currentQcfText;
           bool hasGlyph = currentQcfText.endsWith(glyph);
 
-          // Separate the Ayah text from the end-of-verse glyph if present in this line
           if (hasGlyph) {
             textWithoutGlyph =
                 currentQcfText.substring(0, currentQcfText.length - glyph.length);
           }
 
-          // --- Prepare the main Ayah text style ---
           TextStyle mainTextStyle = finalStyle.copyWith(height: null);
           if (textFilter != null) {
             mainTextStyle = mainTextStyle.copyWith(color: null).merge(
-              TextStyle(
-                foreground: Paint()..colorFilter = textFilter,
-              ),
+              TextStyle(foreground: Paint()..colorFilter = textFilter),
             );
           }
 
-          // --- Prepare the Ayah number style (to ensure correct placement and font) ---
           TextStyle numberTextStyle = finalStyle.copyWith(height: null);
-          if (isDark) {
-            // In Dark Mode: Apply matrix inversion to the number glyph as well
+          if (widget.isDark) {
             numberTextStyle = numberTextStyle.copyWith(color: null).merge(
               TextStyle(
                 foreground: Paint()
@@ -123,34 +123,21 @@ class QuranLine extends StatelessWidget {
                   ]),
               ),
             );
-          } else {
-            // In Light Mode: Use the app's default primary color
-            numberTextStyle = numberTextStyle.copyWith(
-              foreground: null,
-            );
           }
 
-          // Merge text and number into a single RichText to maintain kerning and alignment
           Widget ayahTextWidget = RichText(
             textDirection: TextDirection.rtl,
             text: TextSpan(
               children: [
-                TextSpan(
-                  text: textWithoutGlyph,
-                  style: mainTextStyle,
-                ),
-                if (hasGlyph)
-                  TextSpan(
-                    text: glyph,
-                    style: numberTextStyle,
-                  ),
+                TextSpan(text: textWithoutGlyph, style: mainTextStyle),
+                if (hasGlyph) TextSpan(text: glyph, style: numberTextStyle),
               ],
             ),
           );
 
           return WidgetSpan(
             child: GestureDetector(
-              onLongPressStart: (details) => onLongPress?.call(
+              onLongPressStart: (details) => widget.onLongPress?.call(
                 ayah.surahNumber,
                 ayah.ayahNumber,
                 details,
@@ -170,7 +157,7 @@ class QuranLine extends StatelessWidget {
     );
 
     return FittedBox(
-      fit: boxFit,
+      fit: widget.boxFit,
       child: textWidget,
     );
   }

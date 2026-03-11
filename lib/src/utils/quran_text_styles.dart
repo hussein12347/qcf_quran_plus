@@ -18,7 +18,6 @@ class QuranTextStyles {
     return TextStyle(
       // Combines the page string with the base font family name defined in pubspec
       fontFamily: 'QCF4_tajweed_$pageStr',
-      package: 'qcf_quran_plus',
       color: color,
       fontSize: fontSize,
       height: height,

@@ -5,6 +5,7 @@ import 'package:qcf_quran_plus/src/widgets/surah_header_widget.dart';
 import '../models/highlight_verse.dart';
 import '../models/quran_page.dart';
 import '../services/get_page.dart';
+import '../utils/font_loader_service.dart';
 import 'bsmallah_widget.dart';
 
 /// A highly customizable, high-performance widget to display pages of the Holy Quran.
@@ -37,11 +38,10 @@ class QuranPageView extends StatefulWidget {
 
   /// Custom builder for the Basmallah widget.
   final Widget Function(BuildContext context, int surahNumber)? basmallahBuilder;
-
+final bool isDarkMode;
   final TextStyle? ayahStyle;
   final Color? pageBackgroundColor;
 final bool isTajweed;
-final bool isDarkMode;
   const QuranPageView({
     super.key,
     required this.pageController,
@@ -55,7 +55,7 @@ final bool isDarkMode;
     this.surahHeaderBuilder,
     this.basmallahBuilder,
     this.ayahStyle,
-    this.pageBackgroundColor,  this.isTajweed=true,  this.isDarkMode=false,
+    this.pageBackgroundColor,  this.isTajweed=true, required this.isDarkMode,
   });
 
   @override
@@ -66,10 +66,16 @@ class _QuranPageViewState extends State<QuranPageView> {
   List<QuranPage> pages = [];
   bool isLoading = true;
 
+
   @override
   void initState() {
     super.initState();
     _loadQuranData();
+
+    int initialPage = widget.pageController.initialPage + 1;
+
+    QcfFontLoader.loadFont(initialPage);
+    QcfFontLoader.preloadNearbyPages(initialPage);
   }
 
   /// Initializes the Quran data processor and loads pages into memory.
@@ -99,8 +105,12 @@ class _QuranPageViewState extends State<QuranPageView> {
           controller: widget.pageController,
           itemCount: pages.length,
           onPageChanged: (index) {
-            // Notify listener of the current page index (1-based)
-            widget.onPageChanged?.call(index + 1);
+            int page = index + 1;
+
+            widget.onPageChanged?.call(page);
+
+            QcfFontLoader.loadFont(page);
+            QcfFontLoader.preloadNearbyPages(page);
           },
           itemBuilder: (context, index) {
             return Column(
@@ -109,7 +119,6 @@ class _QuranPageViewState extends State<QuranPageView> {
                 Expanded(
                   child: QuranSinglePageWidget(
                     isTajweed:widget.isTajweed,
-                    isDarkMode: widget.isDarkMode,
                     key: PageStorageKey(index), // Maintains scroll position per page
                     page: pages[index],
                     pageIndex: index + 1,
@@ -120,6 +129,7 @@ class _QuranPageViewState extends State<QuranPageView> {
                     surahHeaderBuilder: widget.surahHeaderBuilder,
                     basmallahBuilder: widget.basmallahBuilder,
                     ayahStyle: widget.ayahStyle,
+                    isDark: widget.isDarkMode,
                   ),
                 ),
                 if (widget.bottomBar != null) widget.bottomBar!,
@@ -147,7 +157,7 @@ class QuranSinglePageWidget extends StatelessWidget {
   final Widget Function(BuildContext context, int surahNumber)? basmallahBuilder;
   final TextStyle? ayahStyle;
 final bool isTajweed;
-final bool isDarkMode;
+final bool isDark;
   const QuranSinglePageWidget({
     super.key,
     required this.page,
@@ -159,8 +169,8 @@ final bool isDarkMode;
     this.surahHeaderBuilder,
     this.basmallahBuilder,
     this.ayahStyle,
+    required this.isDark,
     this.isTajweed=true,
-    this.isDarkMode=false,
   });
 
   @override
@@ -171,13 +181,13 @@ final bool isDarkMode;
     return SizedBox(
       height: deviceSize.height,
       child: (pageIndex == 1 || pageIndex == 2)
-          ? _buildFirstTwoPages(context, deviceSize,isDarkMode)
-          : _buildStandardPage(context, deviceSize, orientation),
+          ? _buildFirstTwoPages(context, deviceSize,isDark)
+          : _buildStandardPage(context, deviceSize, orientation,isDark),
     );
   }
 
   /// Builds the unique centered layout for Al-Fatiha and the start of Al-Baqarah.
-  Widget _buildFirstTwoPages(BuildContext context, Size deviceSize,bool isDarkMode) {
+  Widget _buildFirstTwoPages(BuildContext context, Size deviceSize,isDark) {
     return Center(
       child: SingleChildScrollView(
         child: Padding(
@@ -194,7 +204,7 @@ final bool isDarkMode;
                     BasmallahWidget(page.ayahs[0].surahNumber),
 
               ...page.lines.map(
-                    (line) => _buildQuranLine(line, deviceSize, BoxFit.scaleDown,isDarkMode),
+                    (line) => _buildQuranLine(line, deviceSize, BoxFit.scaleDown,isDark),
               ),
             ],
           ),
@@ -208,6 +218,7 @@ final bool isDarkMode;
       BuildContext context,
       Size deviceSize,
       Orientation orientation,
+      bool isDark
       ) {
     List<String> newSurahs = [];
     return LayoutBuilder(
@@ -264,7 +275,7 @@ final bool isDarkMode;
                     line.ayahs.isNotEmpty && line.ayahs.last.centered
                         ? BoxFit.scaleDown
                         : BoxFit.fill,
-                      isDarkMode
+                      isDark
                   ),
                 ),
               ],
@@ -277,20 +288,22 @@ final bool isDarkMode;
 
   /// Wraps the [QuranLine] in a [ValueListenableBuilder] to handle highlights
   /// with maximum efficiency.
-  Widget _buildQuranLine(Line line, Size deviceSize, BoxFit boxFit,bool isDarkMode) {
-    return ValueListenableBuilder<List<HighlightVerse>>(
-      valueListenable: highlightsNotifier,
-      builder: (context, highlights, _) {
-        return QuranLine(
-          line,
-          highlights,
-          boxFit: boxFit,
-          onLongPress: onLongPress,
-          ayahStyle: ayahStyle,
-          isTajweed: isTajweed,
-          isDark: isDarkMode,
-        );
-      },
+  Widget _buildQuranLine(Line line, Size deviceSize, BoxFit boxFit,bool isDark) {
+    return RepaintBoundary(
+      child: ValueListenableBuilder<List<HighlightVerse>>(
+        valueListenable: highlightsNotifier,
+        builder: (context, highlights, _) {
+          return QuranLine(
+            line,
+            highlights,
+            boxFit: boxFit,
+            onLongPress: onLongPress,
+            ayahStyle: ayahStyle,
+            isTajweed: isTajweed,
+            isDark: isDark,
+          );
+        },
+      ),
     );
   }
 }
