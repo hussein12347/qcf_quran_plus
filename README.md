@@ -29,7 +29,7 @@ Most Quran packages are heavy or require network downloads. This package is full
 - Remove diacritics & normalize text helpers
 - High-performance: smooth scrolling, 60fps
 - Light & dark mode compatible
-- Tajweed
+- Tajweed color support (Uthmani tajweed rules rendering)
 
 ---
 
@@ -76,16 +76,34 @@ Most Quran packages are heavy or require network downloads. This package is full
 
 ---
 
+### 🎨 6. Tajweed Coloring
+
+Supports **Uthmani Tajweed coloring rules** for proper Quran recitation.
+
+Features:
+
+- Works in both **Light** and **Dark** modes
+- Toggle Tajweed on/off
+- No performance impact
+- Compatible with highlighting
+
+---
+
 ## 📸 Screenshots
 
 <p align="center">
-  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/main/assets/screen_shots/Screenshot_20260304_165118.png?raw=true" width="250"/>
-  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/main/assets/screen_shots/Screenshot_20260304_165147.png?raw=true" width="250"/>
+  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/master/assets/screen_shoots/Screenshot_20260310_230313.png?raw=true" width="250"/>
+  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/master/assets/screen_shoots/Screenshot_20260310_230401.png?raw=true" width="250"/>
 </p>
 
 <p align="center">
-  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/main/assets/screen_shots/Screenshot_20260304_165210.png?raw=true" width="250"/>
-  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/main/assets/screen_shots/Screenshot_20260304_165812.png?raw=true" width="250"/>
+  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/master/assets/screen_shoots/Screenshot_20260310_230424.png?raw=true" width="250"/>
+  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/master/assets/screen_shoots/Screenshot_20260310_230445.png?raw=true" width="250"/>
+</p>
+
+<p align="center">
+  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/master/assets/screen_shoots/Screenshot_20260310_230854.png?raw=true" width="250"/>
+  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/master/assets/screen_shoots/Screenshot_20260310_231226.png?raw=true" width="250"/>
 </p>
 ---
 
@@ -120,9 +138,9 @@ final highlights = ValueNotifier<List<HighlightVerse>>([]);
 final controller = PageController();
 
 QuranPageView(
-  pageController: controller,
-  scaffoldKey: GlobalKey(),
-  highlightsNotifier: highlights,
+pageController: controller,
+scaffoldKey: GlobalKey(),
+highlightsNotifier: highlights,
 );
 ```
 
@@ -132,8 +150,8 @@ QuranPageView(
 
 ```dart
 QuranSurahListView(
-  surahNumber: 1,
-  highlightsNotifier: highlights,
+surahNumber: 1,
+highlightsNotifier: highlights,
 );
 ```
 
@@ -155,12 +173,12 @@ print(result["result"]);
 
 ```dart
 highlights.value = [
-  HighlightVerse(
-    surah: 1,
-    verseNumber: 2,
-    page: 1,
-    color: Colors.amber,
-  ),
+HighlightVerse(
+surah: 1,
+verseNumber: 2,
+page: 1,
+color: Colors.amber,
+),
 ];
 ```
 

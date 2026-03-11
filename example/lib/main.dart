@@ -1064,6 +1064,7 @@ class _SurahListReaderScreenState extends State<SurahListReaderScreen> {
           itemScrollController: _itemScrollController,
           fontSize: 25,
           initialScrollIndex: widget.highlightAyah ?? 0,
+          isTajweed: true,
           isDarkMode: Theme.of(context).brightness == Brightness.dark,
           ayahBuilder:
               (

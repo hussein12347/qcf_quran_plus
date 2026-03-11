@@ -48,7 +48,7 @@ class _QuranLineState extends State<QuranLine> {
   void _loadFont() async {
     int page = widget.line.ayahs.first.page;
 
-    await QcfFontLoader.loadFont(page);
+     QcfFontLoader.preloadNearbyPages(page);
 
     if (mounted) {
       setState(() {

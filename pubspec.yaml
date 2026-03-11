@@ -1,7 +1,8 @@
 name: qcf_quran_plus
-description: "A new Flutter package project."
-version: 0.0.1
-homepage:
+description: offline Quran package with Hafs font and have tajweed.
+homepage: https://github.com/hussein12347/qcf_quran_plus/?tab=readme-ov-file
+version: 0.0.2
+
 
 environment:
   sdk: ^3.11.0
