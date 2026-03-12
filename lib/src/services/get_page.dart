@@ -6,56 +6,64 @@ import '../models/surah.dart';
 /// A service class responsible for processing raw Quranic data into
 /// structured [QuranPage] and [Surah] objects.
 ///
-/// This class handles the complex logic of:
-/// * Parsing raw JSON into [Ayah] objects.
-/// * Grouping Ayahs into their respective Surahs.
-/// * Distributing Ayahs across pages and calculating line breaks.
-/// * Detecting special symbols like the Hizb (۞) and Sajda (۩).
+/// **Performance Fix Applied**:
+/// Uses STATIC variables to cache the parsed data.
+/// The heavy parsing and string manipulation runs EXACTLY ONCE per app lifecycle.
+/// Subsequent calls return instantly (0ms), preventing any UI stutter or jank.
 class GetPage {
-  /// The list of fully processed pages for the Mushaf.
-  List<QuranPage> staticPages = [];
+  // ===========================================================================
+  // STATIC CACHE (Global Memory)
+  // ===========================================================================
+  static List<QuranPage> _cachedStaticPages = [];
+  static final List<int> _cachedQuranStops = [];
+  static final List<int> _cachedSurahsStart = [];
+  static final List<Surah> _cachedSurahs = [];
+  static final List<Ayah> _cachedAyahs = [];
+  static bool _isParsed = false;
 
-  /// A list of page numbers where a Hizb or Quarter starts.
-  List<int> quranStops = [];
-
-  /// A list of indices indicating the starting pages of each Surah.
-  List<int> surahsStart = [];
-
-  /// The list of all Surahs with their associated Ayahs and page ranges.
-  List<Surah> surahs = [];
-
-  /// A flat list of every Ayah in the Quran.
-  final List<Ayah> ayahs = [];
-
-  /// Tracking the total number of pages processed.
+  // ===========================================================================
+  // PUBLIC GETTERS (To match your existing code structure)
+  // ===========================================================================
+  List<QuranPage> get staticPages => _cachedStaticPages;
+  List<int> get quranStops => _cachedQuranStops;
+  List<int> get surahsStart => _cachedSurahsStart;
+  List<Surah> get surahs => _cachedSurahs;
+  List<Ayah> get ayahs => _cachedAyahs;
   int lastPage = 0;
 
   /// Entry point to initialize the Quranic data structure.
-  ///
-  /// [quranPagesCount] defines the total pages (e.g., 604 for Madina Mushaf).
-  /// This method avoids re-processing if [staticPages] is already populated.
+  /// Fully synchronous but blazing fast after the first run.
   void getQuran(int quranPagesCount) {
-    if (staticPages.isNotEmpty && quranPagesCount == staticPages.length) {
+    // If we already parsed the Quran in this app session, RETURN INSTANTLY!
+    // This is the secret to 0 jank during scrolling.
+    if (_isParsed && _cachedStaticPages.length == quranPagesCount) {
       return;
     }
 
     final List<Ayah> result = getQuranData();
     _processQuranData(result, quranPagesCount);
+
+    // Mark as parsed so we never do this heavy lifting again
+    _isParsed = true;
   }
 
   /// Fetches the raw data and maps it into a list of [Ayah] objects.
   List<Ayah> getQuranData() {
-    final List<Ayah> othmanQuran = quran.map((e) => Ayah.fromJson(e)).toList();
-    return othmanQuran;
+    return quran.map((e) => Ayah.fromJson(e)).toList();
   }
 
-  /// Orchestrates the data processing: calculates Surah ranges,
-  /// detects Hizb marks, and manages page allocation.
+
+  /// Orchestrates the data processing
   void _processQuranData(List<Ayah> quranAyahsList, int quranPagesCount) {
-    staticPages = List.generate(
+    _cachedStaticPages = List.generate(
       quranPagesCount,
           (index) => QuranPage(pageNumber: index + 1, ayahs: [], lines: []),
     );
+
+    _cachedQuranStops.clear();
+    _cachedSurahsStart.clear();
+    _cachedSurahs.clear();
+    _cachedAyahs.clear();
 
     int hizb = 1;
     int surahsIndex = 1;
@@ -64,34 +72,32 @@ class GetPage {
     for (var ayah in quranAyahsList) {
       // Logic for Surah transition and tracking
       if (ayah.surahNumber != surahsIndex) {
-        if (surahs.isNotEmpty) {
-          surahs.last.endPage = ayahs.last.page;
-          surahs.last.ayahs = List.from(thisSurahAyahs);
+        if (_cachedSurahs.isNotEmpty) {
+          _cachedSurahs.last.endPage = _cachedAyahs.last.page;
+          _cachedSurahs.last.ayahs = List.from(thisSurahAyahs);
         }
         surahsIndex = ayah.surahNumber;
         thisSurahAyahs = [];
       }
 
-      ayahs.add(ayah);
+      _cachedAyahs.add(ayah);
       thisSurahAyahs.add(ayah);
-      staticPages[ayah.page - 1].ayahs.add(ayah);
+      _cachedStaticPages[ayah.page - 1].ayahs.add(ayah);
 
       // Detect Hizb (۞) marks and Sajda (۩)
       if (ayah.ayah.contains('۞')) {
-        staticPages[ayah.page - 1].hizb = hizb++;
-        quranStops.add(ayah.page);
+        _cachedStaticPages[ayah.page - 1].hizb = hizb++;
+        _cachedQuranStops.add(ayah.page);
       }
       if (ayah.ayah.contains('۩')) {
-        staticPages[ayah.page - 1].hasSajda = true;
+        _cachedStaticPages[ayah.page - 1].hasSajda = true;
       }
 
       // Handle the start of a new Surah (Ayah 1)
       if (ayah.ayahNumber == 1) {
-        // Remove the Hizb mark if it appears at the start of a Surah
-        // to avoid visual clutter in the title.
         ayah.ayah = ayah.ayah.replaceAll('۞', '');
-        staticPages[ayah.page - 1].numberOfNewSurahs++;
-        surahs.add(
+        _cachedStaticPages[ayah.page - 1].numberOfNewSurahs++;
+        _cachedSurahs.add(
           Surah(
             index: ayah.surahNumber,
             startPage: ayah.page,
@@ -101,14 +107,14 @@ class GetPage {
             ayahs: [],
           ),
         );
-        surahsStart.add(ayah.page - 1);
+        _cachedSurahsStart.add(ayah.page - 1);
       }
     }
 
     // Close out the final Surah
-    if (surahs.isNotEmpty) {
-      surahs.last.endPage = ayahs.last.page;
-      surahs.last.ayahs = thisSurahAyahs;
+    if (_cachedSurahs.isNotEmpty) {
+      _cachedSurahs.last.endPage = _cachedAyahs.last.page;
+      _cachedSurahs.last.ayahs = thisSurahAyahs;
     }
 
     // Proceed to slice Ayahs into visual lines
@@ -116,12 +122,8 @@ class GetPage {
   }
 
   /// Splits Ayahs into [Line] objects based on newline characters (\n).
-  ///
-  /// This method is critical for Mushaf layouts where an Ayah spans
-  /// multiple lines. It synchronizes the Standard, Othmanic, and QCF
-  /// text data so they all break at the same visual point.
   void _generateLines() {
-    for (var staticPage in staticPages) {
+    for (var staticPage in _cachedStaticPages) {
       staticPage.lines.clear();
       List<Ayah> currentLineAyahs = [];
 

@@ -9,7 +9,6 @@ import '../services/get_page.dart';
 import '../utils/font_loader_service.dart';
 import 'bsmallah_widget.dart';
 
-
 class QuranPageView extends StatefulWidget {
   final PageController pageController;
   final Function(int)? onPageChanged;
@@ -50,7 +49,6 @@ class QuranPageView extends StatefulWidget {
 
 class _QuranPageViewState extends State<QuranPageView> {
   List<QuranPage> pages = [];
-  bool isLoading = true;
   Timer? _preloadDebounce;
 
   @override
@@ -59,7 +57,7 @@ class _QuranPageViewState extends State<QuranPageView> {
     _loadQuranData();
 
     final int initialPage = widget.pageController.initialPage + 1;
-    QcfFontLoader.ensureFontLoaded(initialPage);   // ← محدث
+    QcfFontLoader.ensureFontLoaded(initialPage);
     QcfFontLoader.preloadNearbyPages(initialPage);
   }
 
@@ -67,29 +65,30 @@ class _QuranPageViewState extends State<QuranPageView> {
     final processor = GetPage();
     processor.getQuran(widget.quranPagesCount);
     pages = processor.staticPages;
-    setState(() => isLoading = false);
   }
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
+
 
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Container(
         color: widget.pageBackgroundColor ?? Colors.transparent,
         child: PageView.builder(
+          allowImplicitScrolling: true,
           physics: const BouncingScrollPhysics(),
           controller: widget.pageController,
           itemCount: pages.length,
+          // Disable implicit scrolling to ensure the blank -> animate effect
+          // happens exactly when the user lands on the page, freeing up swipe performance.
           onPageChanged: (index) {
             final int page = index + 1;
             widget.onPageChanged?.call(page);
 
             _preloadDebounce?.cancel();
-            _preloadDebounce = Timer(const Duration(milliseconds: 0), () {
+            // Preload adjacent fonts smoothly after the swipe ends
+            _preloadDebounce = Timer(const Duration(milliseconds: 300), () {
               QcfFontLoader.ensureFontLoaded(page);
               QcfFontLoader.preloadNearbyPages(page);
             });
@@ -102,31 +101,40 @@ class _QuranPageViewState extends State<QuranPageView> {
                 if (widget.topBar != null) widget.topBar!,
                 Expanded(
                   child: FutureBuilder<void>(
+                    // 1. Wait for the required font to be fully loaded
                     future: QcfFontLoader.ensureFontLoaded(pageNum),
                     builder: (context, fontSnapshot) {
-                      // الخط لسه بيتحمل → شاشة فارغة
+
+                      // If font isn't ready yet, show blank space
                       if (fontSnapshot.connectionState != ConnectionState.done) {
                         return Container(
                           color: widget.pageBackgroundColor ?? Colors.transparent,
                         );
                       }
 
-                      // الخط تحمل → انتظر 300 مللي ثانية ثم اعرض الصفحة مع أنيميشن
+                      // 2. Font is ready. Introduce a delay identical to the swipe animation duration.
+                      // This ensures the heavy rendering happens ONLY after the user stops swiping.
                       return FutureBuilder<void>(
-                        future: Future.delayed(const Duration(milliseconds: 300)),
+                        future: Future.delayed(const Duration(milliseconds: 330)),
                         builder: (context, delaySnapshot) {
-                          // نتحقق إذا كان وقت الانتظار انتهى
                           final bool isReady = delaySnapshot.connectionState == ConnectionState.done;
 
-                          // استخدام AnimatedSwitcher لعمل انتقال ناعم
+                          // 3. Smooth Fade-In Animation
                           return AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 300), // مدة الأنيميشن (يمكنك تقليلها أو زيادتها)
-                            switchInCurve: Curves.easeIn,
-                            switchOutCurve: Curves.easeOut,
+                            duration: const Duration(milliseconds: 300), // Fade duration
+                            switchInCurve: Curves.easeOut,
+                            switchOutCurve: Curves.easeIn,
+                            transitionBuilder: (Widget child, Animation<double> animation) {
+                              // Explicitly use FadeTransition for the smoothest effect
+                              return FadeTransition(
+                                opacity: animation,
+                                child: child,
+                              );
+                            },
                             child: isReady
                                 ? QuranSinglePageWidget(
-                              // الـ Key مهم جداً هنا عشان AnimatedSwitcher يفهم إن الويدجت اتغيرت ويبدأ الأنيميشن
-                              key: PageStorageKey('page_$pageNum'),
+                              // A unique key is required for AnimatedSwitcher to know it changed
+                              key: ValueKey('page_content_$pageNum'),
                               isTajweed: widget.isTajweed,
                               page: pages[index],
                               pageIndex: pageNum,
@@ -140,8 +148,8 @@ class _QuranPageViewState extends State<QuranPageView> {
                               isDark: widget.isDarkMode,
                             )
                                 : Container(
-                              // الـ Key مهم هنا أيضاً لنفس السبب
-                              key: const ValueKey('empty_state'),
+                              // Blank state while waiting for the swipe to finish
+                              key: ValueKey('page_blank_$pageNum'),
                               color: widget.pageBackgroundColor ?? Colors.transparent,
                             ),
                           );
@@ -158,13 +166,15 @@ class _QuranPageViewState extends State<QuranPageView> {
       ),
     );
   }
+
   @override
   void dispose() {
     _preloadDebounce?.cancel();
     super.dispose();
   }
 }
-// ====================== QuranSinglePageWidget (نفسها بدون أي تغيير) ======================
+
+// ====================== QuranSinglePageWidget ======================
 class QuranSinglePageWidget extends StatelessWidget {
   final QuranPage page;
   final int pageIndex;

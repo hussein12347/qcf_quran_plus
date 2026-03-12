@@ -1,11 +1,14 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-
 import '../../qcf_quran_plus.dart';
-import '../models/highlight_verse.dart';
-import '../models/quran_page.dart';
-import '../utils/font_loader_service.dart';
 
+/// Renders a single line of Quran text using QCF fonts with highlight support.
+///
+/// **Performance optimizations applied:**
+/// - All heavy text processing (trim, substring, glyph lookup) is moved
+///   to `initState` and `didUpdateWidget`.
+/// - Processing happens **once** per line instead of 60 times a second during UI rendering.
+/// - Removed `Isolate` because package functions (like getaya_noQCF) may contain
+///   unsendable objects (like Completers). Synchronous caching is fast enough to prevent jank.
 class QuranLine extends StatefulWidget {
   const QuranLine(
       this.line,
@@ -21,13 +24,7 @@ class QuranLine extends StatefulWidget {
   final Line line;
   final List<HighlightVerse> bookmarks;
   final BoxFit boxFit;
-
-  final void Function(
-      int surahNumber,
-      int verseNumber,
-      LongPressStartDetails details,
-      )? onLongPress;
-
+  final void Function(int surahNumber, int verseNumber, LongPressStartDetails details)? onLongPress;
   final TextStyle? ayahStyle;
   final bool isTajweed;
   final bool isDark;
@@ -37,39 +34,68 @@ class QuranLine extends StatefulWidget {
 }
 
 class _QuranLineState extends State<QuranLine> {
-  bool _fontLoaded = false;
+  /// Pre-processed data (text, glyph, etc.) stored in memory
+  List<_AyahDisplayData> _displayData = [];
 
   @override
   void initState() {
     super.initState();
-    _loadFont();
+    _processData();
   }
 
-  void _loadFont() async {
-    int page = widget.line.ayahs.first.page;
-
-     QcfFontLoader.preloadNearbyPages(page);
-
-    if (mounted) {
-      setState(() {
-        _fontLoaded = true;
-      });
+  @override
+  void didUpdateWidget(covariant QuranLine oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Re-process only if the actual line data has changed
+    if (oldWidget.line != widget.line) {
+      _processData();
     }
+  }
+
+  /// Processes text strings ONCE synchronously.
+  /// This eliminates scroll jank without the need for Isolates.
+  void _processData() {
+    final processed = widget.line.ayahs.reversed.map((ayah) {
+      final currentQcfText = ayah.qcfData.trimRight();
+      final glyph = getaya_noQCF(ayah.surahNumber, ayah.ayahNumber);
+      final hasGlyph = currentQcfText.endsWith(glyph);
+
+      final textWithoutGlyph = hasGlyph
+          ? currentQcfText.substring(0, currentQcfText.length - glyph.length)
+          : currentQcfText;
+
+      return _AyahDisplayData(
+        textWithoutGlyph: textWithoutGlyph,
+        glyph: glyph,
+        hasGlyph: hasGlyph,
+        surahNumber: ayah.surahNumber,
+        ayahNumber: ayah.ayahNumber,
+      );
+    }).toList();
+
+    setState(() {
+      _displayData = processed;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    // If empty (safety check), return invisible box
+    if (_displayData.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     final defaultStyle = QuranTextStyles.qcfStyle(
       fontSize: 23.55,
       height: 1.45,
       pageNumber: widget.line.ayahs.first.page,
     );
 
-    final finalStyle =
-    widget.ayahStyle != null ? defaultStyle.merge(widget.ayahStyle) : defaultStyle;
+    final finalStyle = widget.ayahStyle != null
+        ? defaultStyle.merge(widget.ayahStyle!)
+        : defaultStyle;
 
     ColorFilter? textFilter;
-
     if (widget.isDark && widget.isTajweed) {
       textFilter = const ColorFilter.matrix([
         -1, 0, 0, 0, 255,
@@ -83,25 +109,16 @@ class _QuranLineState extends State<QuranLine> {
       textFilter = const ColorFilter.mode(Colors.black, BlendMode.srcIn);
     }
 
-    Widget textWidget = RichText(
+    final textWidget = RichText(
       text: TextSpan(
-        children: widget.line.ayahs.reversed.map((ayah) {
+        // Build is now ultra-light and fast!
+        children: _displayData.map((data) {
           final highlight = widget.bookmarks.firstWhere(
-                (h) => h.surah == ayah.surahNumber && h.verseNumber == ayah.ayahNumber,
+                (h) => h.surah == data.surahNumber && h.verseNumber == data.ayahNumber,
             orElse: () => HighlightVerse(surah: 0, verseNumber: 0, page: 0, color: Colors.transparent),
           );
 
-          bool isHighlighted = highlight.color != Colors.transparent;
-
-          String currentQcfText = ayah.qcfData.trimRight();
-          String glyph = getaya_noQCF(ayah.surahNumber, ayah.ayahNumber);
-          String textWithoutGlyph = currentQcfText;
-          bool hasGlyph = currentQcfText.endsWith(glyph);
-
-          if (hasGlyph) {
-            textWithoutGlyph =
-                currentQcfText.substring(0, currentQcfText.length - glyph.length);
-          }
+          final isHighlighted = highlight.color != Colors.transparent;
 
           TextStyle mainTextStyle = finalStyle.copyWith(height: null);
           if (textFilter != null) {
@@ -125,23 +142,20 @@ class _QuranLineState extends State<QuranLine> {
             );
           }
 
-          Widget ayahTextWidget = RichText(
+          final ayahTextWidget = RichText(
             textDirection: TextDirection.rtl,
             text: TextSpan(
               children: [
-                TextSpan(text: textWithoutGlyph, style: mainTextStyle),
-                if (hasGlyph) TextSpan(text: glyph, style: numberTextStyle),
+                TextSpan(text: data.textWithoutGlyph, style: mainTextStyle),
+                if (data.hasGlyph) TextSpan(text: data.glyph, style: numberTextStyle),
               ],
             ),
           );
 
           return WidgetSpan(
             child: GestureDetector(
-              onLongPressStart: (details) => widget.onLongPress?.call(
-                ayah.surahNumber,
-                ayah.ayahNumber,
-                details,
-              ),
+              onLongPressStart: (details) =>
+                  widget.onLongPress?.call(data.surahNumber, data.ayahNumber, details),
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(4.0),
@@ -161,4 +175,22 @@ class _QuranLineState extends State<QuranLine> {
       child: textWidget,
     );
   }
+}
+
+/// Lightweight immutable data class.
+/// Contains everything needed to build the spans instantly.
+class _AyahDisplayData {
+  final String textWithoutGlyph;
+  final String glyph;
+  final bool hasGlyph;
+  final int surahNumber;
+  final int ayahNumber;
+
+  const _AyahDisplayData({
+    required this.textWithoutGlyph,
+    required this.glyph,
+    required this.hasGlyph,
+    required this.surahNumber,
+    required this.ayahNumber,
+  });
 }

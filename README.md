@@ -1,115 +1,51 @@
 # 🕌 qcf_quran_plus
 
-A **lightweight, high-performance Flutter Quran package** using the official **QCF (Hafs) font**.
-> Full Quran, offline, high-performance, tajweed.
+[![Pub Version](https://img.shields.io/pub/v/qcf_quran_plus?color=blue&style=flat-square)](https://pub.dev/packages/qcf_quran_plus)
+[![Flutter](https://img.shields.io/badge/Platform-Flutter-02569B?logo=flutter&style=flat-square)](https://flutter.dev)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 
----
+A **lightweight, high-performance Flutter Quran package** powered by the official **QCF (Hafs) font**.
 
-## 📦 Package Size Impact
-
-- Includes Othmanic glyphs, metadata, Juz/Quarter indexing, and search.
-
-**Why This Matters:**  
-Most Quran packages are heavy or require network downloads. This package is fully offline and optimized for mobile.
-
----
-
-
-## ✨ Features
-
-- Full **604-page Quran** with QCF glyphs
-- **Offline-ready**: no internet required
-- Surah metadata: Arabic, transliteration, English
-- **Juz** & **Quarter (Rub al-Hizb)** indexing
-- Place of revelation (Makkah / Madinah)
-- **Verse highlighting**
-- Scrollable **Surah list view**
-- Customizable **Page view** & **Verse builders**
-- **Search** Quran text offline (up to 50 results)
-- Remove diacritics & normalize text helpers
-- High-performance: smooth scrolling, 60fps
-- Light & dark mode compatible
-- Tajweed color support (Uthmani tajweed rules rendering)
-
----
-
-### 📜 1. Authentic Mushaf PageView (604 Pages)
-- Real Madinah Mushaf layout
-- PageController support
-- Smart Surah Header & Basmallah rendering
-- Fully customizable builders
-- 60fps smooth rendering
-
-------
-
-### 📖 2. Vertical Reading Mode
-- Surah-based scrollable list
-- Ideal for Tafsir & translation apps
-- Audio sync ready
-- Custom ayahBuilder support
-
----
-
-### 🔍 3. Smart Arabic Search
-- Diacritics insensitive
-- Alef variations normalized
-- Ya/Hamza unified
-- Fast in-memory search
-- Returns max 50 results
-
----
-
-### 🎯 4. High Performance Highlighting
-- Powered by ValueNotifier
-- No full rebuild
-- Ideal for audio tracking & bookmarks
-
----
-
-### 📊 5. Built-in Metadata API
-- Surah names (Arabic & English)
-- Juz number
-- Quarter (Rub el Hizb)
-- Page number lookup
-- Makki / Madani
-- Total counts constants
-
----
-
-### 🎨 6. Tajweed Coloring
-
-Supports **Uthmani Tajweed coloring rules** for proper Quran recitation.
-
-Features:
-
-- Works in both **Light** and **Dark** modes
-- Toggle Tajweed on/off
-- No performance impact
-- Compatible with highlighting
+Designed for professional Islamic applications, this package provides a fully offline, 60fps optimized Quran rendering engine complete with Uthmani Tajweed rules, smart search, and a comprehensive metadata API.
 
 ---
 
 ## 📸 Screenshots
 
 <p align="center">
-  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/master/assets/screen_shoots/Screenshot_20260310_230313.png?raw=true" width="250"/>
-  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/master/assets/screen_shoots/Screenshot_20260310_230401.png?raw=true" width="250"/>
+  <img src="https://drive.google.com/uc?export=view&id=112mkVzbC69xsWqvwarV4j07q2tCze_yi" width="250"/>
+  <img src="https://drive.google.com/uc?export=view&id=1d9xB2OMyabzgrXhl3fgcVEAPWGliIgb0" width="250"/>
 </p>
 
 <p align="center">
-  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/master/assets/screen_shoots/Screenshot_20260310_230424.png?raw=true" width="250"/>
-  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/master/assets/screen_shoots/Screenshot_20260310_230445.png?raw=true" width="250"/>
+  <img src="https://drive.google.com/uc?export=view&id=1tK5hi7aiKg7Tj5SnD30UeJV80xLBAVC-" width="250"/>
+  <img src="https://drive.google.com/uc?export=view&id=1OqLHq6AzX0g0nOgwLXvFUt-SjHJa9ARX" width="250"/>
 </p>
 
 <p align="center">
-  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/master/assets/screen_shoots/Screenshot_20260310_230854.png?raw=true" width="250"/>
-  <img src="https://github.com/hussein12347/qcf_quran_plus/blob/master/assets/screen_shoots/Screenshot_20260310_231226.png?raw=true" width="250"/>
+  <img src="https://drive.google.com/uc?export=view&id=1vvXICHhe4dW2joQtg_qVeAmG2kL-Zv4o" width="250"/>
+  <img src="https://drive.google.com/uc?export=view&id=1_WdWHv2vLjSVXBzkbGh9PSA2bGmHETzP" width="250"/>
 </p>
+
 ---
 
-# 🚀 Getting Started
+## ✨ Key Features
 
-## Add Dependency
+- **📖 Authentic Mushaf Rendering:** Full 604-page Quran with exact Madinah Mushaf layout.
+- **⚡ High Performance:** Zero network requests, built for 60fps smooth scrolling, and memory-optimized.
+- **🎨 Uthmani Tajweed Rules:** Native coloring for Tajweed in both Light & Dark modes without performance drops.
+- **🔍 Smart Offline Search:** Fast, diacritic-insensitive Arabic search with automatic text normalization.
+- **🎯 Reactive Highlighting:** Perfect for audio-sync and bookmarks using `ValueNotifier` (no full UI rebuilds).
+- **📜 Vertical Reading Mode:** Scrollable Surah lists ideal for Tafsir, translation, and audio players.
+- **📊 Comprehensive Metadata:** Instant access to Surah names, Juz, Quarter (Rub al-Hizb), Makki/Madani info, and page lookups.
+
+---
+
+## 🚀 Getting Started
+
+### 1. Add Dependencies
+
+Update your `pubspec.yaml`:
 
 ```yaml
 dependencies:
@@ -117,9 +53,7 @@ dependencies:
   scrollable_positioned_list: ^0.3.8
 ```
 
----
-
-## Import
+### 2. Import
 
 ```dart
 import 'package:qcf_quran_plus/qcf_quran_plus.dart';
@@ -127,116 +61,155 @@ import 'package:qcf_quran_plus/qcf_quran_plus.dart';
 
 ---
 
-# 🧩 Usage
+## 🧩 Usage & Examples
 
----
-
-## 📜 Mushaf Page Mode
+### ⚙️ 1. App Startup Font Initialization
+To eliminate any lag when rendering complex Othmanic text for the first time, initialize the fonts during your app's loading/splash screen.
 
 ```dart
-final highlights = ValueNotifier<List<HighlightVerse>>([]);
-final controller = PageController();
+void _initializeFonts() async {
+  await QcfFontLoader.setupFontsAtStartup(
+    onProgress: (double progress) {
+      print('Font Loading Progress: ${(progress * 100).toStringAsFixed(1)}%');
+    },
+  );
+  // Continue to Main App...
+}
+```
+
+### 📖 2. Authentic Mushaf Page Mode
+Display the exact 604 pages of the Quran with customizable builders, Tajweed support, and smart headers.
+
+```dart
+final PageController _controller = PageController(initialPage: 0);
+final ValueNotifier<List<HighlightVerse>> _highlights = ValueNotifier([]);
 
 QuranPageView(
-pageController: controller,
-scaffoldKey: GlobalKey(),
-highlightsNotifier: highlights,
+pageController: _controller,
+scaffoldKey: GlobalKey<ScaffoldState>(),
+highlightsNotifier: _highlights,
+isDarkMode: false,
+isTajweed: true, // Enables Uthmani Tajweed colors
+onPageChanged: (pageNumber) {
+print(getCurrentHizbTextForPage(pageNumber)); // e.g., "نصف الحزب ١"
+},
+onLongPress: (surahNumber, verseNumber, details) {
+// Show Tafsir or Ayah options bottom sheet
+},
 );
 ```
 
----
-
-## 📖 Surah List Mode
+### 📜 3. Vertical Surah List Mode
+Perfect for reading continuous Surahs, translating, or syncing with an audio player.
 
 ```dart
+final ItemScrollController _itemScrollController = ItemScrollController();
+
 QuranSurahListView(
-surahNumber: 1,
-highlightsNotifier: highlights,
+surahNumber: 1, // Al-Fatihah
+itemScrollController: _itemScrollController,
+highlightsNotifier: _highlights,
+fontSize: 25,
+isTajweed: true,
+isDarkMode: Theme.of(context).brightness == Brightness.dark,
+ayahBuilder: (context, surahNumber, verseNumber, pageNumber, othmanicText, isHighlighted, highlightColor) {
+// Fully customize how each Ayah looks!
+return Container(
+color: isHighlighted ? highlightColor.withOpacity(0.2) : Colors.transparent,
+padding: const EdgeInsets.all(16.0),
+child: Column(
+crossAxisAlignment: CrossAxisAlignment.stretch,
+children: [
+Text('Ayah $verseNumber', style: TextStyle(color: Colors.grey)),
+othmanicText, // The highly optimized QCF Text Widget
+],
+),
+);
+},
 );
 ```
 
----
-
-## 🔍 Search Example
-
-```dart
-String query = normalise("الرحمن");
-Map result = searchWords(query);
-
-print(result["occurences"]);
-print(result["result"]);
-```
-
----
-
-## 🎯 Highlight Example
+### 🎯 4. Real-time Highlighting (Audio Sync)
+Change highlights instantly without calling `setState()` to keep your app extremely fast.
 
 ```dart
-highlights.value = [
+// Highlight Ayatul Kursi (Surah 2, Ayah 255)
+_highlights.value = [
 HighlightVerse(
-surah: 1,
-verseNumber: 2,
-page: 1,
-color: Colors.amber,
+surah: 2,
+verseNumber: 255,
+page: 42,
+color: Colors.amber.withOpacity(0.4),
 ),
 ];
+
+// Clear all highlights
+// _highlights.value = [];
 ```
 
----
-
-# 📦 Core API Examples
+### 🔍 5. Smart Arabic Search
+A fast, diacritic-insensitive search engine that normalizes Arabic text (Alef, Ya, Hamza).
 
 ```dart
-getSurahNameArabic(1);
-getSurahNameEnglish(1);
-getVerse(1,1);
-getPageNumber(2,255);
-getJuzNumber(2,255);
-getQuarterNumber(2,255);
-getCurrentHizbTextForPage(5);
+// 1. Clean user input
+String query = normalise("الرحمن");
+
+// 2. Search (Max 50 results)
+Map results = searchWords(query);
+
+print("Matches found: ${results['occurences']}");
+
+for (var match in results['result']) {
+int surah = match['sora'];
+int ayah = match['aya_no'];
+String cleanText = match['text'];
+
+print('${getSurahNameArabic(surah)} : $ayah => $cleanText');
+}
+```
+
+### 📊 6. Core Metadata API & Helpers
+Access comprehensive Quranic data instantly.
+
+```dart
+// --- Surah Info ---
+getSurahNameArabic(1);        // الفاتحة
+getSurahNameEnglish(1);       // Al-Faatiha
+getPlaceOfRevelation(1);      // Makkah
+getVerseCount(1);             // 7
+
+// --- Locations ---
+getPageNumber(2, 255);        // 42
+getJuzNumber(2, 255);         // 3
+getQuarterNumber(2, 255);     // 19
+
+// --- Text Formatting ---
+String rawVerse = getVerse(2, 255);
+String noTashkeel = removeDiacritics(rawVerse);
+String verseEndSymbol = getaya_noQCF(2, 255); // Returns optimized "۝" glyph
 ```
 
 ---
 
-# ⚡ Performance
+## ⚡ Performance Optimization Guide
 
-• 100% Offline  
-• Zero network requests  
-• Optimized JSON structure  
-• Efficient line rendering with QCF font  
-• No expensive rebuild cycles
-
----
-
-# 🎨 Customization Power
-
-You can override:
-
-- Surah Header
-- Basmallah
-- Ayah UI
-- Text Style
-- Page background
-- Top & Bottom bars
+To ensure your app runs at maximum performance:
+1. **Font Preloading:** Always use `QcfFontLoader.setupFontsAtStartup` to cache fonts in memory before the user opens the Mushaf.
+2. **Ayah Rendering in Lists:** `getaya_noQCF` has an internal caching mechanism. Always use it instead of `getAyaNoQCFLite` when rendering lists of Ayahs to prevent stuttering.
+3. **Audio Syncing:** When syncing highlights with audio players, **do not** use `setState`. Rely completely on the `highlightsNotifier` passed to the widgets.
 
 ---
 
-# 📚 Ideal For
+## 👨‍💻 Built For
 
-- Quran reading apps
-- Tafsir apps
-- Translation apps
-- Memorization apps
-- Audio synced Quran players
+- Quran Reading & Memorization Apps
+- Tafsir & Translation Apps
+- Audio-Synced Quran Players
 
 ---
 
-# 📄 License
+## 📄 License
 
-MIT License
+Distributed under the MIT License. See `LICENSE` for more information.
 
----
-
-Made for serious Quran apps.  
-Designed for performance.  
-Engineered for flexibility.
+*Made with ❤️ for serious Islamic application developers.*

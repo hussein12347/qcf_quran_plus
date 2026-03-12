@@ -1,35 +1,13 @@
-// import 'package:flutter/material.dart';
-//
-// import 'core/utls/theme/app_theme.dart';
-// import 'features/splash_screen/presentation/views/splash_view.dart';
-//
-// void main() {
-//   runApp(const MyApp());
-// }
-//
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-//
-//   // This widget is the root of your application.
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       debugShowCheckedModeBanner: false,
-//       title: 'Zpot',
-//       theme: AppTheme.lightTheme, // تطبيق الثيم هنا
-//       home: const SplashScreen(),
-//     );
-//   }
-// }
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-// Import your package
 import 'package:qcf_quran_plus/qcf_quran_plus.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
+
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
   );
@@ -48,7 +26,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: themeNotifier,
-      builder: (_, ThemeMode currentMode, __) {
+      builder: (_, ThemeMode currentMode, _) {
         return MaterialApp(
           title: 'QCF Quran Lite Demo',
           debugShowCheckedModeBanner: false,
@@ -103,9 +81,94 @@ class MyApp extends StatelessWidget {
             ),
             fontFamily: 'Cairo',
           ),
-          home: const DashboardScreen(),
+          home: const SplashScreen(),
         );
       },
+    );
+  }
+}
+
+// =============================================================================
+// Splash Screen
+// =============================================================================
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  double _loadingProgress = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeFonts();
+  }
+
+  void _initializeFonts() async {
+    await QcfFontLoader.setupFontsAtStartup(
+      onProgress: (double progress) {
+        setState(() {
+          _loadingProgress = progress;
+        });
+      },
+    );
+
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    if (mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const DashboardScreen()),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final primaryColor = Theme.of(context).colorScheme.primary;
+
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.menu_book_rounded, size: 100, color: primaryColor),
+            const SizedBox(height: 20),
+            Text(
+              'مكتبة المصحف الذكية',
+              style: TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.bold,
+                color: primaryColor,
+              ),
+            ),
+            const SizedBox(height: 40),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 50.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: LinearProgressIndicator(
+                  value: _loadingProgress,
+                  minHeight: 8,
+                  backgroundColor: primaryColor.withOpacity(0.2),
+                  valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
+                ),
+              ),
+            ),
+            const SizedBox(height: 15),
+            Text(
+              'جاري تجهيز الخطوط... ${(_loadingProgress * 100).toStringAsFixed(1)}%',
+              style: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).textTheme.bodyMedium!.color,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -459,7 +522,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               children: [
                 Expanded(
                   child: DropdownButtonFormField<int>(
-                    value: _selectedSurah,
+                    initialValue: _selectedSurah,
                     decoration: InputDecoration(
                       labelText: 'السورة',
                       border: OutlineInputBorder(
@@ -488,7 +551,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: DropdownButtonFormField<int>(
-                    value: _selectedAyah,
+                    initialValue: _selectedAyah,
                     decoration: InputDecoration(
                       labelText: 'رقم الآية',
                       border: OutlineInputBorder(
@@ -546,7 +609,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
             Center(
               child: Text(
-                getaya_noQCFLite(_selectedSurah, _selectedAyah),
+                getAyaNoQCFLite(_selectedSurah, _selectedAyah),
                 style: QuranTextStyles.hafsStyle(
                   fontSize: 40,
                   color: isDark ? const Color(0xFFD4AF37) : primaryColor,
@@ -781,7 +844,6 @@ class _MushafScreenState extends State<MushafScreen> {
       },
     );
   }
-
 
   Widget _buildBottomSheetCard(
       BuildContext context,

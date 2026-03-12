@@ -2,7 +2,7 @@ name: qcf_quran_plus
 description: offline Quran package with Hafs font and have tajweed.
 repository: https://github.com/hussein12347/qcf_quran_plus
 homepage: https://github.com/hussein12347/qcf_quran_plus/?tab=readme-ov-file
-version: 0.0.3
+version: 0.0.4
 
 
 environment:
@@ -13,6 +13,7 @@ dependencies:
   archive: ^4.0.9
   flutter:
     sdk: flutter
+  path_provider: ^2.1.5
   scrollable_positioned_list: ^0.3.8
 dev_dependencies:
   flutter_test:

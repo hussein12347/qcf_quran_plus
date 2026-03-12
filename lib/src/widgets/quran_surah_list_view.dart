@@ -1,62 +1,25 @@
-import 'dart:async';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../qcf_quran_plus.dart';
 import '../data/quran_data.dart';
-import '../models/highlight_verse.dart';
-import '../utils/font_loader_service.dart';
 import 'bsmallah_widget.dart';
 import 'surah_header_widget.dart';
 
 /// A widget that displays a Surah as a vertically scrollable list of verses.
-///
-/// Unlike [QuranPageView], this view is optimized for continuous scrolling.
-/// It automatically handles:
-/// * Filtering Ayahs by Surah number.
-/// * On-demand font loading for each verse's specific page.
-/// * Custom builders for headers, Basmallah, and individual Ayahs.
-/// * Deep linking to specific verses using [itemScrollController].
 class QuranSurahListView extends StatefulWidget {
-  /// The index of the Surah to display (1-114).
   final int surahNumber;
-
-  /// Optional font size for the Quranic text.
   final double? fontSize;
-
-  /// Notifier to manage and update verse highlighting.
   final ValueNotifier<List<HighlightVerse>> highlightsNotifier;
-
-  /// Callback for long-press interactions on a verse.
   final void Function(int surahNumber, int verseNumber, LongPressStartDetails details)? onLongPress;
-
-  /// Custom base style for the Ayah text.
   final TextStyle? ayahStyle;
-
-  /// Custom builder for the Surah header banner.
   final Widget Function(BuildContext context, int surahNumber)? surahHeaderBuilder;
-
-  /// Custom builder for the Basmallah widget.
   final Widget Function(BuildContext context, int surahNumber)? basmallahBuilder;
-
-  /// A powerful builder that allows complete customization of how an individual
-  /// Ayah is wrapped and displayed.
   final Widget Function(BuildContext context, int surahNumber, int verseNumber, int pageNumber, Widget ayahWidget, bool isHighlighted, Color highlightColor)? ayahBuilder;
-
-  /// Controller to programmatically scroll to specific verses.
   final ItemScrollController? itemScrollController;
-
-  /// Listener to track which verses are currently visible.
   final ItemPositionsListener? itemPositionsListener;
-
-  /// The index to start scrolling from when the widget is first built.
   final int initialScrollIndex;
-
-  /// Whether to use Tajweed (colored) fonts.
   final bool isTajweed;
-
-  /// Whether to apply dark mode color filtering to the fonts.
   final bool isDarkMode;
 
   const QuranSurahListView({
@@ -90,8 +53,6 @@ class _QuranSurahListViewState extends State<QuranSurahListView> {
     _initSurahData();
   }
 
-  /// Detects if the [surahNumber] has changed (e.g., via a dropdown)
-  /// and re-initializes the data.
   @override
   void didUpdateWidget(covariant QuranSurahListView oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -102,8 +63,6 @@ class _QuranSurahListViewState extends State<QuranSurahListView> {
     }
   }
 
-  /// Filters the global Quran data for the selected Surah and triggers
-  /// font loading for the required pages.
   void _initSurahData() {
     // Extract ayahs for the current surah
     surahAyahs = quran.where((ayah) => ayah['sora'] == widget.surahNumber).toList();

@@ -1,16 +1,11 @@
-import 'dart:typed_data';
+import 'dart:io';
 import 'dart:isolate';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:archive/archive.dart';
+import 'package:path_provider/path_provider.dart';
 
 /// A specialized utility class for managing dynamic loading of Quran Complex Fonts (QCF).
-///
-/// Since the Quran has 604 pages and each page may require a unique font file,
-/// loading all fonts at startup is memory-intensive. This class provides:
-/// * **Lazy Loading**: Fonts are only loaded when needed.
-/// * **Isolate-based Extraction**: Unzipping font files happens on a background thread.
-/// * **Preloading**: Predictive loading of upcoming pages for a lag-free experience.
 class QcfFontLoader {
   /// Tracks active loading tasks to prevent redundant network/file requests.
   static final Map<int, Future<void>> _loadingTasks = {};
@@ -18,10 +13,47 @@ class QcfFontLoader {
   /// Stores the numbers of pages whose fonts have successfully been registered.
   static final Set<int> _loadedPages = {};
 
+  /// Pre-extracts all fonts at startup, tracks progress, and ensures files are complete.
+  static Future<void> setupFontsAtStartup({required Function(double progress) onProgress}) async {
+    final dir = await getApplicationDocumentsDirectory();
+    final fontDir = Directory('${dir.path}/qcf_fonts');
+
+    // Create the directory if it doesn't exist
+    if (!fontDir.existsSync()) {
+      fontDir.createSync(recursive: true);
+    }
+
+    const int totalPages = 604;
+
+    for (int i = 1; i <= totalPages; i++) {
+      String pageStr = i.toString().padLeft(3, '0');
+      final String fontName = 'QCF4_tajweed_$pageStr';
+      File ttfFile = File('${fontDir.path}/$fontName.ttf');
+
+      bool isFileValid = ttfFile.existsSync() && ttfFile.lengthSync() > 15000;
+
+      if (!isFileValid) {
+        try {
+          final data = await rootBundle.load(
+            'packages/qcf_quran_plus/assets/fonts/qcf_tajweed/$fontName.zip',
+          );
+          final bytes = data.buffer.asUint8List();
+
+          // Unzip in an isolate to avoid blocking the main UI thread
+          final Uint8List fontBytes = await Isolate.run(() => _extractFont(bytes));
+
+          // Save the full extracted TTF file to local storage
+          await ttfFile.writeAsBytes(fontBytes, flush: true);
+        } catch (e) {
+          debugPrint("❌ Error extracting $fontName: $e");
+        }
+      }
+
+      onProgress(i / totalPages);
+    }
+  }
+
   /// Ensures that the font for a specific [pageNumber] is loaded and registered.
-  ///
-  /// If the font is already loaded, it returns immediately.
-  /// If a loading task is already in progress, it returns the existing [Future].
   static Future<void> ensureFontLoaded(int pageNumber) {
     if (_loadedPages.contains(pageNumber)) return Future.value();
     if (_loadingTasks.containsKey(pageNumber)) return _loadingTasks[pageNumber]!;
@@ -40,38 +72,51 @@ class QcfFontLoader {
     return task;
   }
 
-  /// Synchronously checks if the font for [pageNumber] is already available.
   static bool isFontLoaded(int pageNumber) {
     return _loadedPages.contains(pageNumber);
   }
 
-  /// Internal logic to fetch, unzip, and register the font.
-  ///
-  /// The font is expected to be located in the package's assets folder
-  /// as a `.zip` file to minimize package size.
+  /// Internal logic to fetch the font. Heavy File I/O is moved to an Isolate.
   static Future<void> _loadFontInternal(int pageNumber) async {
-    // Standard format for Quran pages (e.g., 001, 015, 604)
     String pageStr = pageNumber.toString().padLeft(3, '0');
     final String fontName = 'QCF4_tajweed_$pageStr';
 
-    // Loads the zip file from the package assets
-    final data = await rootBundle.load(
-      'packages/qcf_quran_plus/assets/fonts/qcf_tajweed/$fontName.zip',
-    );
+    final dir = await getApplicationDocumentsDirectory();
+    final fontPath = '${dir.path}/qcf_fonts/$fontName.ttf';
 
-    final bytes = data.buffer.asUint8List();
+    // 1. We move the file checking and reading to a background Isolate.
+    // Reading large files on the main thread during swipe causes jank.
+    Uint8List? fontBytes = await Isolate.run(() {
+      File ttfFile = File(fontPath);
+      if (ttfFile.existsSync() && ttfFile.lengthSync() > 15000) {
+        return ttfFile.readAsBytesSync(); // Read on background isolate
+      }
+      return null;
+    });
 
-    // Uses Isolate.run to decode the zip on a background thread
-    // to prevent UI jank (Flutter 3.7+)
-    final Uint8List fontBytes = await Isolate.run(() => _extractFont(bytes));
+    // 2. If it wasn't found in local storage, extract it from assets.
+    if (fontBytes == null) {
+      final data = await rootBundle.load(
+        'packages/qcf_quran_plus/assets/fonts/qcf_tajweed/$fontName.zip',
+      );
+      final zipBytes = data.buffer.asUint8List();
 
-    // Registers the font with the Flutter Engine dynamically
+      fontBytes = await Isolate.run(() {
+        final extractedBytes = _extractFont(zipBytes);
+        // Also save it inside the isolate to avoid main thread blockage
+        File ttfFile = File(fontPath);
+        ttfFile.parent.createSync(recursive: true);
+        ttfFile.writeAsBytesSync(extractedBytes, flush: true);
+        return extractedBytes;
+      });
+    }
+
+    // Register the font with the Flutter Engine dynamically (Must be on main thread)
     final loader = FontLoader(fontName);
-    loader.addFont(Future.value(ByteData.view(fontBytes.buffer)));
+    loader.addFont(Future.value(ByteData.view(fontBytes!.buffer)));
     await loader.load();
   }
 
-  /// Helper method used inside the Isolate to find the `.ttf` file within the zip.
   static Uint8List _extractFont(Uint8List zipBytes) {
     final archive = ZipDecoder().decodeBytes(zipBytes);
     for (final file in archive) {
@@ -82,13 +127,8 @@ class QcfFontLoader {
     throw Exception("Font not found in zip");
   }
 
-  /// Predictively loads fonts for pages near the [currentPage].
-  ///
-  /// Defaults to loading the previous 2 pages and the next 10 pages.
-  /// This ensures that as the user swipes through the Mushaf, the fonts
-  /// are usually ready before the page is rendered.
   static void preloadNearbyPages(int currentPage) {
-    for (int i = currentPage - 2; i <= currentPage + 10; i++) {
+    for (int i = currentPage - 1; i <= currentPage + 3; i++) {
       if (i > 0 && i <= 604) ensureFontLoaded(i);
     }
   }

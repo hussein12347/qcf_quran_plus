@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.0.3] - 2026-03-04
+## [0.0.4] - 2026-03-04
 - Initial release of qcf_quran_plus
 - Full 604-page offline Quran with QCF font
 - PageView & SurahListView modes

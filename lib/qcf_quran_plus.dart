@@ -3,7 +3,7 @@
 /// This library provides customizable widgets (`QuranPageView`) and comprehensive
 /// data models/helpers to render Quranic pages using the official QCF font.
 /// It includes built-in functions for searching, statistics, and metadata retrieval.
-library qcf_quran_plus;
+library;
 
 import 'package:qcf_quran_plus/src/data/juzs.dart';
 import 'package:qcf_quran_plus/src/data/page_data.dart';
@@ -17,6 +17,7 @@ import 'package:qcf_quran_plus/src/data/suwar.dart';
 export 'src/widgets/quran_page_view.dart';
 export 'src/widgets/quran_surah_list_view.dart';
 export 'src/utils/quran_text_styles.dart';
+export 'src/utils/font_loader_service.dart';
 // ---------------------------------------------------------------------------
 // 2. Models Exports
 // ---------------------------------------------------------------------------
@@ -165,14 +166,14 @@ String getCurrentHizbTextForPage(int pageNumber, {bool isArabic = true}) {
   return "";
 }
 
-/// Returns the Quarter (Rub el Hizb) number (1-240) based on the [surahNumber] and [aya_no].
-int getQuarterNumber(int surahNumber, int aya_no) {
+/// Returns the Quarter (Rub el Hizb) number (1-240) based on the [surahNumber] and [ayaNo].
+int getQuarterNumber(int surahNumber, int ayaNo) {
   int currentQuarter = 1;
   for (int i = 0; i < quarters.length; i++) {
     int qSurah = quarters[i]["surah"]!;
     int qAyah = quarters[i]["ayah"]!;
 
-    if (surahNumber > qSurah || (surahNumber == qSurah && aya_no >= qAyah)) {
+    if (surahNumber > qSurah || (surahNumber == qSurah && ayaNo >= qAyah)) {
       currentQuarter = i + 1;
     } else {
       break;
@@ -181,12 +182,12 @@ int getQuarterNumber(int surahNumber, int aya_no) {
   return currentQuarter;
 }
 
-/// Returns the Juz number (1-30) for a specific [surahNumber] and [aya_no].
-int getJuzNumber(int surahNumber, int aya_no) {
+/// Returns the Juz number (1-30) for a specific [surahNumber] and [ayaNo].
+int getJuzNumber(int surahNumber, int ayaNo) {
   for (var juz in juz) {
     if (juz["verses"].keys.contains(surahNumber)) {
-      if (aya_no >= juz["verses"][surahNumber][0] &&
-          aya_no <= juz["verses"][surahNumber][1]) {
+      if (ayaNo >= juz["verses"][surahNumber][0] &&
+          ayaNo <= juz["verses"][surahNumber][1]) {
         return int.parse(juz["id"].toString());
       }
     }
@@ -218,8 +219,8 @@ String getSurahNameArabic(int surahNumber) {
   return surah[surahNumber - 1]['arabic'].toString();
 }
 
-/// Returns the page number (1-604) of the Quran where the specific [surahNumber] and [aya_no] is located.
-int getPageNumber(int surahNumber, int aya_no) {
+/// Returns the page number (1-604) of the Quran where the specific [surahNumber] and [ayaNo] is located.
+int getPageNumber(int surahNumber, int ayaNo) {
   if (surahNumber > 114 || surahNumber <= 0) {
     throw "No Surah found with given surahNumber";
   }
@@ -232,8 +233,8 @@ int getPageNumber(int surahNumber, int aya_no) {
     ) {
       final e = pageData[pageIndex][surahIndexInPage];
       if (e['surah'] == surahNumber &&
-          e['start'] <= aya_no &&
-          e['end'] >= aya_no) {
+          e['start'] <= ayaNo &&
+          e['end'] >= ayaNo) {
         return pageIndex + 1;
       }
     }
@@ -258,13 +259,13 @@ int getVerseCount(int surahNumber) {
   return int.parse(surah[surahNumber - 1]['aya'].toString());
 }
 
-/// Returns the Arabic text of a specific verse based on [surahNumber] and [aya_no].
+/// Returns the Arabic text of a specific verse based on [surahNumber] and [ayaNo].
 ///
 /// Set [verseEndSymbol] to `true` if you want the Ayah number symbol appended to the text.
-String getVerse(int surahNumber, int aya_no, {bool verseEndSymbol = false}) {
+String getVerse(int surahNumber, int ayaNo, {bool verseEndSymbol = false}) {
   String verse = "";
   for (var i in quran) {
-    if (i['sora'] == surahNumber && i['aya_no'] == aya_no) {
+    if (i['sora'] == surahNumber && i['aya_no'] == ayaNo) {
       verse = i['aya_text'].toString();
       break;
     }
@@ -277,14 +278,14 @@ String getVerse(int surahNumber, int aya_no, {bool verseEndSymbol = false}) {
   return verse;
 }
 
-/// Returns the ornate end-of-verse symbol ('۝') enclosing the [aya_no].
+/// Returns the ornate end-of-verse symbol ('۝') enclosing the [ayaNo].
 ///
 /// Set [arabicNumeral] to `false` to use standard western numerals instead of Arabic numerals.
-String getVerseEndSymbol(int aya_no, {bool arabicNumeral = true}) {
+String getVerseEndSymbol(int ayaNo, {bool arabicNumeral = true}) {
   var arabicNumeric = '';
-  var digits = aya_no.toString().split("").toList();
+  var digits = ayaNo.toString().split("").toList();
 
-  if (!arabicNumeral) return '\u06dd${aya_no.toString()}';
+  if (!arabicNumeral) return '\u06dd${ayaNo.toString()}';
 
   const Map arabicNumbers = {
     "0": "٠",
@@ -303,14 +304,14 @@ String getVerseEndSymbol(int aya_no, {bool arabicNumeral = true}) {
     arabicNumeric += arabicNumbers[e];
   }
 
-  return '$arabicNumeric';
+  return arabicNumeric;
 }
 
-/// Returns the specific QCF font glyph representing the [aya_no] for rendering purposes.
-String getaya_noQCFLite(int surahNumber, int aya_no, {bool verseEndSymbol = true}) {
+/// Returns the specific QCF font glyph representing the [ayaNo] for rendering purposes.
+String getAyaNoQCFLite(int surahNumber, int ayaNo, {bool verseEndSymbol = true}) {
   String glyph = "";
   for (var i in quran) {
-    if (i['sora'] == surahNumber && i['aya_no'] == aya_no) {
+    if (i['sora'] == surahNumber && i['aya_no'] == ayaNo) {
       final String qcfData = i['aya_text_othmanic'].toString();
 
       final bool endsWithNewline = qcfData.endsWith('\n');
@@ -331,9 +332,9 @@ String getaya_noQCFLite(int surahNumber, int aya_no, {bool verseEndSymbol = true
 final Map<String, String> _verseGlyphCache = {};
 
 /// دالة سريعة جداً لجلب رمز رقم الآية باستخدام qcfData
-String getaya_noQCF(int surahNumber, int aya_no) {
+String getaya_noQCF(int surahNumber, int ayaNo) {
   // مفتاح البحث المخصص للآية
-  final key = '${surahNumber}_${aya_no}';
+  final key = '${surahNumber}_$ayaNo';
 
   // إذا بحثنا عنها من قبل، أعدها فوراً (هذا يمنع الـ Lag)
   if (_verseGlyphCache.containsKey(key)) {
@@ -344,7 +345,7 @@ String getaya_noQCF(int surahNumber, int aya_no) {
 
   // حلقة البحث ستعمل مرة واحدة فقط لكل آية في التطبيق كله
   for (var i in quran) {
-    if (i['sora'] == surahNumber && i['aya_no'] == aya_no) {
+    if (i['sora'] == surahNumber && i['aya_no'] == ayaNo) {
       // نستخدم حقل qcfData كما هو موجود في الـ JSON الخاص بك
       final String qcfData = i['qcfData'].toString().trim();
 
