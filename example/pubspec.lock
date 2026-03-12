@@ -305,7 +305,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.0.4"
+    version: "0.0.6"
   scrollable_positioned_list:
     dependency: "direct main"
     description:

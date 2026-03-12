@@ -611,12 +611,5 @@ class Assets {
   static const String qcfTajweedQCF4Tajweed602 = 'assets/fonts/qcf_tajweed/QCF4_tajweed_602.zip';
   static const String qcfTajweedQCF4Tajweed603 = 'assets/fonts/qcf_tajweed/QCF4_tajweed_603.zip';
   static const String qcfTajweedQCF4Tajweed604 = 'assets/fonts/qcf_tajweed/QCF4_tajweed_604.zip';
-  static const String screenShootsScreenshot20260310230313 = 'assets/screen_shoots/Screenshot_20260310_230313.png';
-  static const String screenShootsScreenshot20260310230401 = 'assets/screen_shoots/Screenshot_20260310_230401.png';
-  static const String screenShootsScreenshot20260310230424 = 'assets/screen_shoots/Screenshot_20260310_230424.png';
-  static const String screenShootsScreenshot20260310230445 = 'assets/screen_shoots/Screenshot_20260310_230445.png';
-  static const String screenShootsScreenshot20260310230854 = 'assets/screen_shoots/Screenshot_20260310_230854.png';
-  static const String screenShootsScreenshot20260310231212 = 'assets/screen_shoots/Screenshot_20260310_231212.png';
-  static const String screenShootsScreenshot20260310231226 = 'assets/screen_shoots/Screenshot_20260310_231226.png';
 
 }

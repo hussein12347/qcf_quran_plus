@@ -13,18 +13,18 @@ Designed for professional Islamic applications, this package provides a fully of
 ## 📸 Screenshots
 
 <p align="center">
-  <img src="https://drive.google.com/uc?export=view&id=112mkVzbC69xsWqvwarV4j07q2tCze_yi" width="250"/>
-  <img src="https://drive.google.com/uc?export=view&id=1d9xB2OMyabzgrXhl3fgcVEAPWGliIgb0" width="250"/>
+  <img width="250" alt="Screenshot_20260310_231226" src="https://github.com/user-attachments/assets/482a0b7f-f048-4434-86af-c40e301dc503" />
+  <img width="250" alt="Screenshot_20260310_231212" src="https://github.com/user-attachments/assets/65dc7b33-e80e-4cd4-ac4e-8d80957ae654" />
 </p>
 
 <p align="center">
-  <img src="https://drive.google.com/uc?export=view&id=1tK5hi7aiKg7Tj5SnD30UeJV80xLBAVC-" width="250"/>
-  <img src="https://drive.google.com/uc?export=view&id=1OqLHq6AzX0g0nOgwLXvFUt-SjHJa9ARX" width="250"/>
+  <img width="250" alt="Screenshot_20260310_230854" src="https://github.com/user-attachments/assets/5a4652cf-9b53-4521-991f-304afd91a6cd" />
+  <img width="250" alt="Screenshot_20260310_230445" src="https://github.com/user-attachments/assets/da1d0f89-41e2-4e2e-8c21-6a50bece6786" />
 </p>
 
 <p align="center">
-  <img src="https://drive.google.com/uc?export=view&id=1vvXICHhe4dW2joQtg_qVeAmG2kL-Zv4o" width="250"/>
-  <img src="https://drive.google.com/uc?export=view&id=1_WdWHv2vLjSVXBzkbGh9PSA2bGmHETzP" width="250"/>
+  <img width="250" alt="Screenshot_20260310_230424" src="https://github.com/user-attachments/assets/4bac8673-06e8-4478-bf2f-55f331cd61f2" />
+  <img width="250" alt="Screenshot_20260310_230313" src="https://github.com/user-attachments/assets/8caa32df-7168-48e3-8c1e-657710b6f5ad" />
 </p>
 
 ---

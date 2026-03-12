@@ -127,9 +127,9 @@ class QcfFontLoader {
     throw Exception("Font not found in zip");
   }
 
-  static void preloadNearbyPages(int currentPage) {
-    for (int i = currentPage - 1; i <= currentPage + 3; i++) {
-      if (i > 0 && i <= 604) ensureFontLoaded(i);
-    }
-  }
+  // static void preloadNearbyPages(int currentPage) {
+  //   for (int i = currentPage - 1; i <= currentPage + 3; i++) {
+  //     if (i > 0 && i <= 604) ensureFontLoaded(i);
+  //   }
+  // }
 }

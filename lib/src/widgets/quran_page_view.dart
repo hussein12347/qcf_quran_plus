@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:qcf_quran_plus/src/widgets/quran_line.dart';
 import 'package:qcf_quran_plus/src/widgets/surah_header_widget.dart';
@@ -6,10 +5,9 @@ import 'package:qcf_quran_plus/src/widgets/surah_header_widget.dart';
 import '../models/highlight_verse.dart';
 import '../models/quran_page.dart';
 import '../services/get_page.dart';
-import '../utils/font_loader_service.dart';
 import 'bsmallah_widget.dart';
 
-class QuranPageView extends StatefulWidget {
+class QuranPageView extends StatelessWidget {
   final PageController pageController;
   final Function(int)? onPageChanged;
   final ValueNotifier<List<HighlightVerse>> highlightsNotifier;
@@ -25,7 +23,9 @@ class QuranPageView extends StatefulWidget {
   final Color? pageBackgroundColor;
   final bool isTajweed;
 
-  const QuranPageView({
+  final List<QuranPage> pages;
+
+  QuranPageView({
     super.key,
     required this.pageController,
     this.onPageChanged,
@@ -41,124 +41,52 @@ class QuranPageView extends StatefulWidget {
     this.pageBackgroundColor,
     this.isTajweed = true,
     required this.isDarkMode,
-  });
+  }) : pages = _loadQuranData(quranPagesCount);
 
-  @override
-  State<QuranPageView> createState() => _QuranPageViewState();
-}
-
-class _QuranPageViewState extends State<QuranPageView> {
-  List<QuranPage> pages = [];
-  Timer? _preloadDebounce;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadQuranData();
-
-    final int initialPage = widget.pageController.initialPage + 1;
-    QcfFontLoader.ensureFontLoaded(initialPage);
-    QcfFontLoader.preloadNearbyPages(initialPage);
-  }
-
-  void _loadQuranData() {
+  // دالة ثابتة (static) لتحميل الصفحات مرة واحدة عند إنشاء الويدجت
+  static List<QuranPage> _loadQuranData(int count) {
     final processor = GetPage();
-    processor.getQuran(widget.quranPagesCount);
-    pages = processor.staticPages;
+    processor.getQuran(count);
+    return processor.staticPages;
   }
 
   @override
   Widget build(BuildContext context) {
-
-
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Container(
-        color: widget.pageBackgroundColor ?? Colors.transparent,
+        color: pageBackgroundColor ?? Colors.transparent,
         child: PageView.builder(
           allowImplicitScrolling: true,
-          physics: const BouncingScrollPhysics(),
-          controller: widget.pageController,
+          controller: pageController,
           itemCount: pages.length,
-          // Disable implicit scrolling to ensure the blank -> animate effect
-          // happens exactly when the user lands on the page, freeing up swipe performance.
           onPageChanged: (index) {
             final int page = index + 1;
-            widget.onPageChanged?.call(page);
-
-            _preloadDebounce?.cancel();
-            // Preload adjacent fonts smoothly after the swipe ends
-            _preloadDebounce = Timer(const Duration(milliseconds: 300), () {
-              QcfFontLoader.ensureFontLoaded(page);
-              QcfFontLoader.preloadNearbyPages(page);
-            });
+            onPageChanged?.call(page);
           },
           itemBuilder: (context, index) {
             final int pageNum = index + 1;
 
             return Column(
               children: [
-                if (widget.topBar != null) widget.topBar!,
+                if (topBar != null) topBar!,
                 Expanded(
-                  child: FutureBuilder<void>(
-                    // 1. Wait for the required font to be fully loaded
-                    future: QcfFontLoader.ensureFontLoaded(pageNum),
-                    builder: (context, fontSnapshot) {
-
-                      // If font isn't ready yet, show blank space
-                      if (fontSnapshot.connectionState != ConnectionState.done) {
-                        return Container(
-                          color: widget.pageBackgroundColor ?? Colors.transparent,
-                        );
-                      }
-
-                      // 2. Font is ready. Introduce a delay identical to the swipe animation duration.
-                      // This ensures the heavy rendering happens ONLY after the user stops swiping.
-                      return FutureBuilder<void>(
-                        future: Future.delayed(const Duration(milliseconds: 330)),
-                        builder: (context, delaySnapshot) {
-                          final bool isReady = delaySnapshot.connectionState == ConnectionState.done;
-
-                          // 3. Smooth Fade-In Animation
-                          return AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 300), // Fade duration
-                            switchInCurve: Curves.easeOut,
-                            switchOutCurve: Curves.easeIn,
-                            transitionBuilder: (Widget child, Animation<double> animation) {
-                              // Explicitly use FadeTransition for the smoothest effect
-                              return FadeTransition(
-                                opacity: animation,
-                                child: child,
-                              );
-                            },
-                            child: isReady
-                                ? QuranSinglePageWidget(
-                              // A unique key is required for AnimatedSwitcher to know it changed
-                              key: ValueKey('page_content_$pageNum'),
-                              isTajweed: widget.isTajweed,
-                              page: pages[index],
-                              pageIndex: pageNum,
-                              highlightsNotifier: widget.highlightsNotifier,
-                              scaffoldKey: widget.scaffoldKey,
-                              onLongPress: widget.onLongPress,
-                              pageController: widget.pageController,
-                              surahHeaderBuilder: widget.surahHeaderBuilder,
-                              basmallahBuilder: widget.basmallahBuilder,
-                              ayahStyle: widget.ayahStyle,
-                              isDark: widget.isDarkMode,
-                            )
-                                : Container(
-                              // Blank state while waiting for the swipe to finish
-                              key: ValueKey('page_blank_$pageNum'),
-                              color: widget.pageBackgroundColor ?? Colors.transparent,
-                            ),
-                          );
-                        },
-                      );
-                    },
+                  child: QuranSinglePageWidget(
+                    key: ValueKey('page_content_$pageNum'),
+                    isTajweed: isTajweed,
+                    page: pages[index],
+                    pageIndex: pageNum,
+                    highlightsNotifier: highlightsNotifier,
+                    scaffoldKey: scaffoldKey,
+                    onLongPress: onLongPress,
+                    pageController: pageController,
+                    surahHeaderBuilder: surahHeaderBuilder,
+                    basmallahBuilder: basmallahBuilder,
+                    ayahStyle: ayahStyle,
+                    isDark: isDarkMode,
                   ),
                 ),
-                if (widget.bottomBar != null) widget.bottomBar!,
+                if (bottomBar != null) bottomBar!,
               ],
             );
           },
@@ -166,15 +94,10 @@ class _QuranPageViewState extends State<QuranPageView> {
       ),
     );
   }
-
-  @override
-  void dispose() {
-    _preloadDebounce?.cancel();
-    super.dispose();
-  }
 }
 
 // ====================== QuranSinglePageWidget ======================
+// (نفس الكود الخاص بها بدون أي تعديل لأنها بالفعل StatelessWidget)
 class QuranSinglePageWidget extends StatelessWidget {
   final QuranPage page;
   final int pageIndex;
@@ -208,11 +131,13 @@ class QuranSinglePageWidget extends StatelessWidget {
     final deviceSize = MediaQuery.of(context).size;
     final orientation = MediaQuery.of(context).orientation;
 
-    return SizedBox(
-      height: deviceSize.height,
-      child: (pageIndex == 1 || pageIndex == 2)
-          ? _buildFirstTwoPages(context, deviceSize, isDark)
-          : _buildStandardPage(context, deviceSize, orientation, isDark),
+    return RepaintBoundary(
+      child: SizedBox(
+        height: deviceSize.height,
+        child: (pageIndex == 1 || pageIndex == 2)
+            ? _buildFirstTwoPages(context, deviceSize, isDark)
+            : _buildStandardPage(context, deviceSize, orientation, isDark),
+      ),
     );
   }
 
@@ -241,7 +166,7 @@ class QuranSinglePageWidget extends StatelessWidget {
   }
 
   Widget _buildStandardPage(BuildContext context, Size deviceSize, Orientation orientation, bool isDark) {
-    List<String> newSurahs = [];
+    Set<String> newSurahs = {};
     return LayoutBuilder(
       builder: (context, constraints) {
         return ListView.builder(

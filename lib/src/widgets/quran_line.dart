@@ -35,27 +35,15 @@ class QuranLine extends StatefulWidget {
 
 class _QuranLineState extends State<QuranLine> {
   /// Pre-processed data (text, glyph, etc.) stored in memory
-  List<_AyahDisplayData> _displayData = [];
+  late final List<_AyahDisplayData> _displayData;
 
   @override
   void initState() {
     super.initState();
-    _processData();
+    _displayData = _processData();
   }
-
-  @override
-  void didUpdateWidget(covariant QuranLine oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    // Re-process only if the actual line data has changed
-    if (oldWidget.line != widget.line) {
-      _processData();
-    }
-  }
-
-  /// Processes text strings ONCE synchronously.
-  /// This eliminates scroll jank without the need for Isolates.
-  void _processData() {
-    final processed = widget.line.ayahs.reversed.map((ayah) {
+  List<_AyahDisplayData> _processData() {
+    return widget.line.ayahs.reversed.map((ayah) {
       final currentQcfText = ayah.qcfData.trimRight();
       final glyph = getaya_noQCF(ayah.surahNumber, ayah.ayahNumber);
       final hasGlyph = currentQcfText.endsWith(glyph);
@@ -72,11 +60,19 @@ class _QuranLineState extends State<QuranLine> {
         ayahNumber: ayah.ayahNumber,
       );
     }).toList();
-
-    setState(() {
-      _displayData = processed;
-    });
   }
+
+  @override
+  void didUpdateWidget(covariant QuranLine oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Re-process only if the actual line data has changed
+    if (oldWidget.line != widget.line) {
+      _processData();
+    }
+  }
+
+  /// Processes text strings ONCE synchronously.
+  /// This eliminates scroll jank without the need for Isolates.
 
   @override
   Widget build(BuildContext context) {
@@ -108,17 +104,17 @@ class _QuranLineState extends State<QuranLine> {
     } else if (!widget.isDark && !widget.isTajweed) {
       textFilter = const ColorFilter.mode(Colors.black, BlendMode.srcIn);
     }
-
+    final highlightMap = {
+      for (var h in widget.bookmarks)
+        '${h.surah}_${h.verseNumber}': h
+    };
     final textWidget = RichText(
       text: TextSpan(
         // Build is now ultra-light and fast!
         children: _displayData.map((data) {
-          final highlight = widget.bookmarks.firstWhere(
-                (h) => h.surah == data.surahNumber && h.verseNumber == data.ayahNumber,
-            orElse: () => HighlightVerse(surah: 0, verseNumber: 0, page: 0, color: Colors.transparent),
-          );
+          final highlight = highlightMap['${data.surahNumber}_${data.ayahNumber}'];
 
-          final isHighlighted = highlight.color != Colors.transparent;
+          final isHighlighted = highlight?.color != Colors.transparent;
 
           TextStyle mainTextStyle = finalStyle.copyWith(height: null);
           if (textFilter != null) {
@@ -142,9 +138,8 @@ class _QuranLineState extends State<QuranLine> {
             );
           }
 
-          final ayahTextWidget = RichText(
-            textDirection: TextDirection.rtl,
-            text: TextSpan(
+          final ayahTextWidget = Text.rich(
+        TextSpan(
               children: [
                 TextSpan(text: data.textWithoutGlyph, style: mainTextStyle),
                 if (data.hasGlyph) TextSpan(text: data.glyph, style: numberTextStyle),
@@ -159,7 +154,7 @@ class _QuranLineState extends State<QuranLine> {
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(4.0),
-                  color: isHighlighted ? highlight.color.withOpacity(0.4) : null,
+                  color: isHighlighted ? highlight?.color.withOpacity(0.4) : null,
                 ),
                 child: ayahTextWidget,
               ),
