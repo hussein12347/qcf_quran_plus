@@ -699,7 +699,6 @@ class MushafScreen extends StatefulWidget {
 class _MushafScreenState extends State<MushafScreen> {
   late PageController _pageController;
   late ValueNotifier<List<HighlightVerse>> _activeHighlightsNotifier;
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late ValueNotifier<String> _hizbTextNotifier;
 
   Timer? _highlightTimer;
@@ -883,7 +882,6 @@ class _MushafScreenState extends State<MushafScreen> {
   Widget build(BuildContext context) {
     final isDarkMode= Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      key: _scaffoldKey,
       appBar: AppBar(
         title: ValueListenableBuilder<String>(
           valueListenable: _hizbTextNotifier,
@@ -917,8 +915,7 @@ class _MushafScreenState extends State<MushafScreen> {
           isDarkMode: isDarkMode,
           isTajweed: true,
           pageController: _pageController,
-          highlightsNotifier: _activeHighlightsNotifier,
-          scaffoldKey: _scaffoldKey,
+          highlights: _activeHighlightsNotifier.value,
           ayahStyle: TextStyle(
             color: Theme.of(context).textTheme.bodyLarge!.color,
           ),
@@ -1122,7 +1119,8 @@ class _SurahListReaderScreenState extends State<SurahListReaderScreen> {
       body: SafeArea(
         child: QuranSurahListView(
           surahNumber: _selectedSurah,
-          highlightsNotifier: _highlightsNotifier,
+          highlights: _highlightsNotifier.value,
+
           itemScrollController: _itemScrollController,
           fontSize: 25,
           initialScrollIndex: widget.highlightAyah ?? 0,
