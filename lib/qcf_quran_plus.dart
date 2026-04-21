@@ -25,6 +25,10 @@ export 'src/models/highlight_verse.dart';
 export 'src/models/ayah.dart';
 export 'src/models/quran_page.dart';
 export 'src/models/surah.dart';
+export 'src/data/quarters.dart';
+export 'src/data/juzs.dart';
+export 'src/data/page_data.dart';
+export 'src/data/suwar.dart';
 // ---------------------------------------------------------------------------
 // 3. Quran Data Helper Functions
 // ---------------------------------------------------------------------------
@@ -102,7 +106,7 @@ String _convertToArabicNumber(int number) {
 /// Pass [isArabic] as `true` (default) for Arabic text, or `false` for English.
 String getHizbTextByPage(int pageNumber, {bool isArabic = true}) {
   int quarterIndex = quarters.indexWhere(
-        (q) => getPageNumber(q['surah']!, q['ayah']!) == pageNumber,
+    (q) => getPageNumber(q['surah']!, q['ayah']!) == pageNumber,
   );
 
   final bool showHizbText = quarterIndex != -1;
@@ -227,9 +231,9 @@ int getPageNumber(int surahNumber, int ayaNo) {
 
   for (int pageIndex = 0; pageIndex < pageData.length; pageIndex++) {
     for (
-    int surahIndexInPage = 0;
-    surahIndexInPage < pageData[pageIndex].length;
-    surahIndexInPage++
+      int surahIndexInPage = 0;
+      surahIndexInPage < pageData[pageIndex].length;
+      surahIndexInPage++
     ) {
       final e = pageData[pageIndex][surahIndexInPage];
       if (e['surah'] == surahNumber &&
@@ -308,7 +312,11 @@ String getVerseEndSymbol(int ayaNo, {bool arabicNumeral = true}) {
 }
 
 /// Returns the specific QCF font glyph representing the [ayaNo] for rendering purposes.
-String getAyaNoQCFLite(int surahNumber, int ayaNo, {bool verseEndSymbol = true}) {
+String getAyaNoQCFLite(
+  int surahNumber,
+  int ayaNo, {
+  bool verseEndSymbol = true,
+}) {
   String glyph = "";
   for (var i in quran) {
     if (i['sora'] == surahNumber && i['aya_no'] == ayaNo) {
@@ -328,6 +336,7 @@ String getAyaNoQCFLite(int surahNumber, int ayaNo, {bool verseEndSymbol = true})
 
   return glyph;
 }
+
 // تعريف Map لتخزين أرقام الآيات لعدم البحث عنها مرة أخرى (Cache)
 final Map<String, String> _verseGlyphCache = {};
 
@@ -414,7 +423,9 @@ Map<String, dynamic> searchWords(String query, {int limit = 50}) {
   if (result.isEmpty) {
     for (var aya in quran) {
       String othmanicText = aya['aya_text']?.toString() ?? "";
-      String normalizedOthmanic = normalizeArabicText(othmanicText.toLowerCase());
+      String normalizedOthmanic = normalizeArabicText(
+        othmanicText.toLowerCase(),
+      );
 
       if (normalizedOthmanic.contains(normalizedQuery)) {
         result.add({
@@ -428,10 +439,7 @@ Map<String, dynamic> searchWords(String query, {int limit = 50}) {
     }
   }
 
-  return {
-    "occurences": result.length,
-    "result": result
-  };
+  return {"occurences": result.length, "result": result};
 }
 
 /// Converts Quran text to a normalized form suitable for search or comparison.

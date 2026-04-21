@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:isolate';
 import 'package:flutter/services.dart';
-import 'package:flutter/material.dart';
 import 'package:archive/archive.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -60,7 +59,9 @@ class QcfFontLoader {
       const int batchSize = 50;
 
       for (int i = 1; i <= totalPages; i += batchSize) {
-        int end = (i + batchSize - 1 < totalPages) ? i + batchSize - 1 : totalPages;
+        int end = (i + batchSize - 1 < totalPages)
+            ? i + batchSize - 1
+            : totalPages;
 
         List<Future<void>> batchTasks = [];
         for (int j = i; j <= end; j++) {
@@ -70,8 +71,7 @@ class QcfFontLoader {
         await Future.wait(batchTasks);
         onProgress(end / totalPages);
       }
-    }
-    else {
+    } else {
       for (int i = 1; i <= totalPages; i++) {
         await ensureFontLoaded(i);
         onProgress(i / totalPages);
@@ -93,20 +93,20 @@ class QcfFontLoader {
 
   /// ================= BACKGROUND PROCESS =================
   /// Extracts remaining fonts gradually without blocking UI
-  static Future<void> _processRemainingFonts(
-      int start,
-      int end,
-      Directory? fontDir,
-      ) async {
-    for (int i = start; i <= end; i++) {
-      try {
-        await _prepareFontFileIfNeeded(i, fontDir);
-      } catch (_) {}
-
-      /// Yield to UI thread to avoid frame drops
-      await Future(() {});
-    }
-  }
+  // static Future<void> _processRemainingFonts(
+  //     int start,
+  //     int end,
+  //     Directory? fontDir,
+  //     ) async {
+  //   for (int i = start; i <= end; i++) {
+  //     try {
+  //       await _prepareFontFileIfNeeded(i, fontDir);
+  //     } catch (_) {}
+  //
+  //     /// Yield to UI thread to avoid frame drops
+  //     await Future(() {});
+  //   }
+  // }
 
   /// ================= PUBLIC METHODS =================
   /// Ensures font is loaded once (safe for multiple calls)
@@ -121,11 +121,13 @@ class QcfFontLoader {
 
     _loadingTasks[pageNumber] = task;
 
-    task.then((_) {
-      _loadedPages.add(pageNumber);
-    }).whenComplete(() {
-      _loadingTasks.remove(pageNumber);
-    });
+    task
+        .then((_) {
+          _loadedPages.add(pageNumber);
+        })
+        .whenComplete(() {
+          _loadingTasks.remove(pageNumber);
+        });
 
     return task;
   }
@@ -137,8 +139,7 @@ class QcfFontLoader {
 
   /// ================= SMART PRELOADING =================
   /// Preloads nearby pages for smooth scrolling
-  static Future<void> preloadPages(int currentPage,
-      {int radius = 5}) async {
+  static Future<void> preloadPages(int currentPage, {int radius = 5}) async {
     List<int> pages = [];
 
     for (int i = 0; i <= radius; i++) {
@@ -154,8 +155,9 @@ class QcfFontLoader {
     }
 
     for (int page in pages) {
-      if (_loadedPages.contains(page) ||
-          _loadingTasks.containsKey(page)) continue;
+      if (_loadedPages.contains(page) || _loadingTasks.containsKey(page)) {
+        continue;
+      }
 
       await ensureFontLoaded(page);
 
@@ -176,12 +178,9 @@ class QcfFontLoader {
       final fontPath = '${fontDir.path}/$fontName.ttf';
       final file = File(fontPath);
 
-      // 1. فحص سريع وقراءة مباشرة من الذاكرة بدون Isolate (سريع جداً)
       if (await file.exists() && await file.length() > 1000) {
         fontBytes = await file.readAsBytes();
-      }
-      // 2. لو الملف مش موجود، هنا بس نستخدم Isolate عشان نفك الضغط (أول مرة فقط)
-      else {
+      } else {
         final zipBytes = await _loadZip(fontName);
 
         fontBytes = await Isolate.run(() {
@@ -205,21 +204,21 @@ class QcfFontLoader {
 
   /// ================= HELPERS =================
   /// Ensures font file exists on disk (background preparation)
-  static Future<void> _prepareFontFileIfNeeded(
-      int page, Directory? dir) async {
-    if (_currentMode != FontStorageMode.permanentDisk) return;
-
-    final fontName = _getFontName(page);
-    final path = '${dir!.path}/$fontName.ttf';
-    final file = File(path);
-
-    if (file.existsSync() && file.lengthSync() > 1000) return;
-
-    final zipBytes = await _loadZip(fontName);
-
-    final extracted = await Isolate.run(() => _extractFont(zipBytes));
-    await file.writeAsBytes(extracted, flush: true);
-  }
+  // static Future<void> _prepareFontFileIfNeeded(
+  //     int page, Directory? dir) async {
+  //   if (_currentMode != FontStorageMode.permanentDisk) return;
+  //
+  //   final fontName = _getFontName(page);
+  //   final path = '${dir!.path}/$fontName.ttf';
+  //   final file = File(path);
+  //
+  //   if (file.existsSync() && file.lengthSync() > 1000) return;
+  //
+  //   final zipBytes = await _loadZip(fontName);
+  //
+  //   final extracted = await Isolate.run(() => _extractFont(zipBytes));
+  //   await file.writeAsBytes(extracted, flush: true);
+  // }
 
   /// Loads zipped font from assets
   static Future<Uint8List> _loadZip(String fontName) async {

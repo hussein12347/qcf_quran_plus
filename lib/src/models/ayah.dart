@@ -102,7 +102,7 @@ class Ayah {
 
   /// Creates an [Ayah] instance from a JSON map.
   ///
-  /// Automatically parses and cleans up the text spacing for standard, 
+  /// Automatically parses and cleans up the text spacing for standard,
   /// Uthmani, and QCF formats.
   factory Ayah.fromJson(Map<String, dynamic> json) {
     /// Helper function to process and format line text.
@@ -143,7 +143,7 @@ class Ayah {
 
   /// Creates a copy of an existing [Ayah] instance but overrides its text properties.
   ///
-  /// This is particularly useful when dynamically updating fonts, scripts, 
+  /// This is particularly useful when dynamically updating fonts, scripts,
   /// or applying tajweed rules to an existing Ayah without losing its metadata.
   factory Ayah.fromAya({
     required Ayah ayah,
@@ -152,27 +152,26 @@ class Ayah {
     required String qcfData,
     required String ayaText,
     bool centered = false,
-  }) =>
-      Ayah(
-        id: ayah.id,
-        jozz: ayah.jozz,
-        surahNumber: ayah.surahNumber,
-        page: ayah.page,
-        lineStart: ayah.lineStart,
-        lineEnd: ayah.lineEnd,
-        ayahNumber: ayah.ayahNumber,
-        quarter: ayah.quarter,
-        hizb: ayah.hizb,
-        surahNameEn: ayah.surahNameEn,
-        surahNameAr: ayah.surahNameAr,
-        isFavorite: ayah.isFavorite,
-        othmanicAyah: othmanicAyah,
-        qcfData: qcfData,
-        ayah: aya,
-        ayahText: ayaText,
-        sajda: false,
-        centered: centered,
-      );
+  }) => Ayah(
+    id: ayah.id,
+    jozz: ayah.jozz,
+    surahNumber: ayah.surahNumber,
+    page: ayah.page,
+    lineStart: ayah.lineStart,
+    lineEnd: ayah.lineEnd,
+    ayahNumber: ayah.ayahNumber,
+    quarter: ayah.quarter,
+    hizb: ayah.hizb,
+    surahNameEn: ayah.surahNameEn,
+    surahNameAr: ayah.surahNameAr,
+    isFavorite: ayah.isFavorite,
+    othmanicAyah: othmanicAyah,
+    qcfData: qcfData,
+    ayah: aya,
+    ayahText: ayaText,
+    sajda: false,
+    centered: centered,
+  );
 }
 
 /// List of standard Western Arabic numerals (English digits).
@@ -184,7 +183,7 @@ const arabic = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
 /// Extension providing helpful string manipulation methods.
 extension StringExtensions on String {
   /// Inserts a given [text] into the current string at the specified [index].
-  /// 
+  ///
   /// Example:
   /// ```dart
   /// 'Hello'.insert(' World', 5); // returns 'Hello World'
@@ -192,9 +191,9 @@ extension StringExtensions on String {
   String insert(String text, int index) =>
       substring(0, index) + text + substring(index);
 
-  /// Converts all standard Western (English) digits in the string 
+  /// Converts all standard Western (English) digits in the string
   /// to Eastern Arabic numerals.
-  /// 
+  ///
   /// Useful for displaying Ayah numbers or page numbers in Arabic script.
   String toArabic() {
     String number = this;

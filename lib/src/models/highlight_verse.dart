@@ -91,5 +91,8 @@ class HighlightVerse {
   /// Generates a hash code for the [HighlightVerse] instance.
   @override
   int get hashCode =>
-      verseNumber.hashCode ^ surah.hashCode ^ page.hashCode ^ color.value.hashCode;
+      verseNumber.hashCode ^
+      surah.hashCode ^
+      page.hashCode ^
+      color.value.hashCode;
 }

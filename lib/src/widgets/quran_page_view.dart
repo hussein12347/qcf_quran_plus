@@ -17,10 +17,17 @@ class QuranPageView extends StatelessWidget {
 
   final Widget? topBar;
   final Widget? bottomBar;
-  final void Function(int surahNumber, int verseNumber, LongPressStartDetails details)? onLongPress;
+  final void Function(
+    int surahNumber,
+    int verseNumber,
+    LongPressStartDetails details,
+  )?
+  onLongPress;
   final int quranPagesCount;
-  final Widget Function(BuildContext context, int surahNumber)? surahHeaderBuilder;
-  final Widget Function(BuildContext context, int surahNumber)? basmallahBuilder;
+  final Widget Function(BuildContext context, int surahNumber)?
+  surahHeaderBuilder;
+  final Widget Function(BuildContext context, int surahNumber)?
+  basmallahBuilder;
   final bool isDarkMode;
   final TextStyle? ayahStyle;
   final Color? pageBackgroundColor;
@@ -35,7 +42,8 @@ class QuranPageView extends StatelessWidget {
     this.onPageChanged,
     required this.highlights,
     this.onLongPress,
-    this.quranPagesCount = 604, // Default to the standard 604 pages of the Madani Mushaf
+    this.quranPagesCount =
+        604, // Default to the standard 604 pages of the Madani Mushaf
     this.topBar,
     this.bottomBar,
     this.surahHeaderBuilder,
@@ -61,11 +69,13 @@ class QuranPageView extends StatelessWidget {
       child: Container(
         color: pageBackgroundColor ?? Colors.transparent,
         child: PageView.builder(
-          allowImplicitScrolling: false, // Pre-render adjacent pages for smoother scrolling
+          allowImplicitScrolling:
+              false, // Pre-render adjacent pages for smoother scrolling
           controller: pageController,
           itemCount: pages.length,
           onPageChanged: (index) {
-            final int page = index + 1; // Convert 0-indexed to 1-indexed page numbers
+            final int page =
+                index + 1; // Convert 0-indexed to 1-indexed page numbers
             onPageChanged?.call(page);
           },
           itemBuilder: (context, index) {
@@ -74,16 +84,19 @@ class QuranPageView extends StatelessWidget {
             return Column(
               children: [
                 // Display top bar if provided (e.g., for Surah name, Juz info)
-                if (topBar != null) topBar!,
+                ?topBar,
 
                 // The main Quran page content
                 Expanded(
                   child: QuranSinglePageWidget(
-                    key: ValueKey('page_content_$pageNum'), // Helps Flutter optimize rendering
+                    key: ValueKey(
+                      'page_content_$pageNum',
+                    ), // Helps Flutter optimize rendering
                     isTajweed: isTajweed,
                     page: pages[index],
                     pageIndex: pageNum,
-                    highlights: highlights, // Pass the static list of highlights
+                    highlights:
+                        highlights, // Pass the static list of highlights
                     onLongPress: onLongPress,
                     pageController: pageController,
                     surahHeaderBuilder: surahHeaderBuilder,
@@ -94,7 +107,7 @@ class QuranPageView extends StatelessWidget {
                 ),
 
                 // Display bottom bar if provided (e.g., for page numbers)
-                if (bottomBar != null) bottomBar!,
+                ?bottomBar,
               ],
             );
           },
@@ -113,8 +126,10 @@ class QuranSinglePageWidget extends StatelessWidget {
   final List<HighlightVerse> highlights;
   final void Function(int, int, LongPressStartDetails)? onLongPress;
   final PageController pageController;
-  final Widget Function(BuildContext context, int surahNumber)? surahHeaderBuilder;
-  final Widget Function(BuildContext context, int surahNumber)? basmallahBuilder;
+  final Widget Function(BuildContext context, int surahNumber)?
+  surahHeaderBuilder;
+  final Widget Function(BuildContext context, int surahNumber)?
+  basmallahBuilder;
   final TextStyle? ayahStyle;
   final bool isTajweed;
   final bool isDark;
@@ -151,7 +166,11 @@ class QuranSinglePageWidget extends StatelessWidget {
   }
 
   /// Builds the layout specifically for Page 1 (Al-Fatihah) and Page 2 (Al-Baqarah).
-  Widget _buildFirstTwoPages(BuildContext context, Size deviceSize, bool isDark) {
+  Widget _buildFirstTwoPages(
+    BuildContext context,
+    Size deviceSize,
+    bool isDark,
+  ) {
     return Center(
       child: SingleChildScrollView(
         child: Padding(
@@ -171,7 +190,8 @@ class QuranSinglePageWidget extends StatelessWidget {
 
               // Render the actual lines of the Quran text
               ...page.lines.map(
-                    (line) => _buildQuranLine(line, deviceSize, BoxFit.scaleDown, isDark),
+                (line) =>
+                    _buildQuranLine(line, deviceSize, BoxFit.scaleDown, isDark),
               ),
             ],
           ),
@@ -181,7 +201,12 @@ class QuranSinglePageWidget extends StatelessWidget {
   }
 
   /// Builds the standard layout for pages 3 through 604.
-  Widget _buildStandardPage(BuildContext context, Size deviceSize, Orientation orientation, bool isDark) {
+  Widget _buildStandardPage(
+    BuildContext context,
+    Size deviceSize,
+    Orientation orientation,
+    bool isDark,
+  ) {
     // Keep track of Surahs already displayed on this page to avoid duplicate headers
     Set<String> newSurahs = {};
 
@@ -213,30 +238,42 @@ class QuranSinglePageWidget extends StatelessWidget {
 
             // Calculate how much space is taken up by Surah headers/Basmallahs on this page
             // Note: Surah 9 (At-Tawbah) does not have a Basmallah
-            double surahHeaderOffset = (page.numberOfNewSurahs *
-                (line.ayahs.isNotEmpty && line.ayahs[0].surahNumber != 9 ? 110 : 80));
+            double surahHeaderOffset =
+                (page.numberOfNewSurahs *
+                (line.ayahs.isNotEmpty && line.ayahs[0].surahNumber != 9
+                    ? 110
+                    : 80));
 
             // Dynamically calculate the height of each line to ensure the text fills the page perfectly
             int linesCount = page.lines.isNotEmpty ? page.lines.length : 1;
-            double lineHeight = (availableHeight - surahHeaderOffset) * 0.95 / linesCount;
+            double lineHeight =
+                (availableHeight - surahHeaderOffset) * 0.95 / linesCount;
 
             return Column(
               children: [
                 // Insert Header and Basmallah if this line starts a new Surah
                 if (isFirstAyahInSurah && line.ayahs.isNotEmpty) ...[
-                  surahHeaderBuilder?.call(context, line.ayahs[0].surahNumber) ??
+                  surahHeaderBuilder?.call(
+                        context,
+                        line.ayahs[0].surahNumber,
+                      ) ??
                       SurahHeaderWidget(suraNumber: line.ayahs[0].surahNumber),
 
                   // Add Basmallah unless it's Surah 9 (At-Tawbah)
                   if (line.ayahs[0].surahNumber != 9)
-                    basmallahBuilder?.call(context, line.ayahs[0].surahNumber) ??
+                    basmallahBuilder?.call(
+                          context,
+                          line.ayahs[0].surahNumber,
+                        ) ??
                         BasmallahWidget(line.ayahs[0].surahNumber),
                 ],
 
                 // The actual line of Quranic text
                 SizedBox(
                   width: deviceSize.width - 32, // Apply padding
-                  height: lineHeight > 0 ? lineHeight : 40, // Fallback height if calculations fail
+                  height: lineHeight > 0
+                      ? lineHeight
+                      : 40, // Fallback height if calculations fail
                   child: _buildQuranLine(
                     line,
                     deviceSize,
@@ -256,7 +293,12 @@ class QuranSinglePageWidget extends StatelessWidget {
   }
 
   /// Renders a single line of Quran text and handles highlights and interactions.
-  Widget _buildQuranLine(Line line, Size deviceSize, BoxFit boxFit, bool isDark) {
+  Widget _buildQuranLine(
+    Line line,
+    Size deviceSize,
+    BoxFit boxFit,
+    bool isDark,
+  ) {
     return RepaintBoundary(
       child: QuranLine(
         line,

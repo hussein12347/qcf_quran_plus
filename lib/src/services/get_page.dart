@@ -52,12 +52,11 @@ class GetPage {
     return quran.map((e) => Ayah.fromJson(e)).toList();
   }
 
-
   /// Orchestrates the data processing
   void _processQuranData(List<Ayah> quranAyahsList, int quranPagesCount) {
     _cachedStaticPages = List.generate(
       quranPagesCount,
-          (index) => QuranPage(pageNumber: index + 1, ayahs: [], lines: []),
+      (index) => QuranPage(pageNumber: index + 1, ayahs: [], lines: []),
     );
 
     _cachedQuranStops.clear();

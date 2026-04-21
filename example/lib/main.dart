@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:qcf_quran_plus/qcf_quran_plus.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
-
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(
@@ -475,12 +474,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget _buildNavButton(
-      BuildContext context, {
-        required String title,
-        required IconData icon,
-        required Color color,
-        required VoidCallback onTap,
-      }) {
+    BuildContext context, {
+    required String title,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(15),
@@ -535,7 +534,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                     items: List.generate(
                       114,
-                          (i) => DropdownMenuItem(
+                      (i) => DropdownMenuItem(
                         value: i + 1,
                         child: Text(getSurahNameArabic(i + 1)),
                       ),
@@ -564,7 +563,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                     items: List.generate(
                       maxAyahs,
-                          (i) => DropdownMenuItem(
+                      (i) => DropdownMenuItem(
                         value: i + 1,
                         child: Text('${i + 1}'),
                       ),
@@ -758,11 +757,11 @@ class _MushafScreenState extends State<MushafScreen> {
   }
 
   void _showAyahDetails(
-      BuildContext context,
-      int surahNumber,
-      int verseNumber,
-      int pageNumber,
-      ) {
+    BuildContext context,
+    int surahNumber,
+    int verseNumber,
+    int pageNumber,
+  ) {
     final String surahAr = getSurahNameArabic(surahNumber);
     final int juz = getJuzNumber(surahNumber, verseNumber);
     final String revelation = getPlaceOfRevelation(surahNumber);
@@ -845,11 +844,11 @@ class _MushafScreenState extends State<MushafScreen> {
   }
 
   Widget _buildBottomSheetCard(
-      BuildContext context,
-      String title,
-      String value,
-      IconData icon,
-      ) {
+    BuildContext context,
+    String title,
+    String value,
+    IconData icon,
+  ) {
     return Container(
       width: 65,
       padding: const EdgeInsets.symmetric(vertical: 12),
@@ -880,7 +879,7 @@ class _MushafScreenState extends State<MushafScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode= Theme.of(context).brightness == Brightness.dark;
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: AppBar(
         title: ValueListenableBuilder<String>(
@@ -930,7 +929,7 @@ class _MushafScreenState extends State<MushafScreen> {
                 ? _pageController.page!.toInt() + 1
                 : widget.initialPage;
             final isHighlighted = _activeHighlightsNotifier.value.any(
-                  (e) => e.surah == surahNumber && e.verseNumber == verseNumber,
+              (e) => e.surah == surahNumber && e.verseNumber == verseNumber,
             );
 
             if (!isHighlighted) {
@@ -949,8 +948,8 @@ class _MushafScreenState extends State<MushafScreen> {
               _activeHighlightsNotifier.value = _activeHighlightsNotifier.value
                   .where(
                     (e) =>
-                e.surah != surahNumber || e.verseNumber != verseNumber,
-              )
+                        e.surah != surahNumber || e.verseNumber != verseNumber,
+                  )
                   .toList();
             }
             _showAyahDetails(context, surahNumber, verseNumber, currentPage);
@@ -1050,7 +1049,7 @@ class _SurahListReaderScreenState extends State<SurahListReaderScreen> {
         } else {
           _highlightAndScrollToAyah(_currentPlayingAyah);
           setState(
-                () {},
+            () {},
           ); // Update the UI to show the 'pause' button on the new Ayah
         }
       });
@@ -1128,115 +1127,115 @@ class _SurahListReaderScreenState extends State<SurahListReaderScreen> {
           isDarkMode: Theme.of(context).brightness == Brightness.dark,
           ayahBuilder:
               (
-              context,
-              surahNumber,
-              verseNumber,
-              pageNumber,
-              othmanicText,
-              isHighlighted,
-              highlightColor,
+                context,
+                surahNumber,
+                verseNumber,
+                pageNumber,
+                othmanicText,
+                isHighlighted,
+                highlightColor,
               ) {
-            // Check if this specific Ayah is currently "playing"
-            final bool isCurrentlyPlaying =
-                _isPlaying && _currentPlayingAyah == verseNumber;
+                // Check if this specific Ayah is currently "playing"
+                final bool isCurrentlyPlaying =
+                    _isPlaying && _currentPlayingAyah == verseNumber;
 
-            return AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              margin: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 8,
-              ),
-              decoration: BoxDecoration(
-                color: isHighlighted
-                    ? highlightColor.withOpacity(0.15)
-                    : Theme.of(context).cardColor,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: isHighlighted
-                      ? highlightColor
-                      : primaryColor.withOpacity(0.1),
-                  width: isHighlighted ? 1.5 : 1,
-                ),
-                boxShadow: [
-                  if (!isDark && !isHighlighted)
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.03),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isHighlighted
+                        ? highlightColor.withOpacity(0.15)
+                        : Theme.of(context).cardColor,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: isHighlighted
+                          ? highlightColor
+                          : primaryColor.withOpacity(0.1),
+                      width: isHighlighted ? 1.5 : 1,
                     ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: primaryColor.withOpacity(0.05),
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(15),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: primaryColor.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            'آية $verseNumber',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: primaryColor,
-                              fontSize: 12,
-                            ),
+                    boxShadow: [
+                      if (!isDark && !isHighlighted)
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.03),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: primaryColor.withOpacity(0.05),
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(15),
                           ),
                         ),
-                        Row(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            // Dynamic Play/Pause Button
-                            InkWell(
-                              onTap: () => _togglePlay(verseNumber),
-                              child: Icon(
-                                isCurrentlyPlaying
-                                    ? Icons.pause_circle_filled
-                                    : Icons.play_circle_outline,
-                                size: 26,
-                                color: isCurrentlyPlaying
-                                    ? const Color(0xFFD4AF37)
-                                    : primaryColor,
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: primaryColor.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                'آية $verseNumber',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: primaryColor,
+                                  fontSize: 12,
+                                ),
                               ),
                             ),
-                            const SizedBox(width: 16),
-                            Icon(Icons.copy, size: 18, color: primaryColor),
-                            const SizedBox(width: 16),
-                            Icon(
-                              Icons.share_outlined,
-                              size: 18,
-                              color: primaryColor,
+                            Row(
+                              children: [
+                                // Dynamic Play/Pause Button
+                                InkWell(
+                                  onTap: () => _togglePlay(verseNumber),
+                                  child: Icon(
+                                    isCurrentlyPlaying
+                                        ? Icons.pause_circle_filled
+                                        : Icons.play_circle_outline,
+                                    size: 26,
+                                    color: isCurrentlyPlaying
+                                        ? const Color(0xFFD4AF37)
+                                        : primaryColor,
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Icon(Icons.copy, size: 18, color: primaryColor),
+                                const SizedBox(width: 16),
+                                Icon(
+                                  Icons.share_outlined,
+                                  size: 18,
+                                  color: primaryColor,
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                      ],
-                    ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: othmanicText,
+                      ),
+                    ],
                   ),
-                  Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: othmanicText
-                  ),
-                ],
-              ),
-            );
-          },
+                );
+              },
         ),
       ),
     );

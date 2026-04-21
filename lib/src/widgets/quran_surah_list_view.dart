@@ -18,19 +18,35 @@ class QuranSurahListView extends StatelessWidget {
   final List<HighlightVerse> highlights;
 
   /// Callback triggered when a verse is long-pressed.
-  final void Function(int surahNumber, int verseNumber, LongPressStartDetails details)? onLongPress;
+  final void Function(
+    int surahNumber,
+    int verseNumber,
+    LongPressStartDetails details,
+  )?
+  onLongPress;
 
   /// Custom text style applied to the Quranic text.
   final TextStyle? ayahStyle;
 
   /// A custom builder to override the default Surah header (the frame containing the Surah name).
-  final Widget Function(BuildContext context, int surahNumber)? surahHeaderBuilder;
+  final Widget Function(BuildContext context, int surahNumber)?
+  surahHeaderBuilder;
 
   /// A custom builder to override the default Basmallah image/text.
-  final Widget Function(BuildContext context, int surahNumber)? basmallahBuilder;
+  final Widget Function(BuildContext context, int surahNumber)?
+  basmallahBuilder;
 
   /// A custom builder to completely override how an individual Ayah (verse) is rendered.
-  final Widget Function(BuildContext context, int surahNumber, int verseNumber, int pageNumber, Widget ayahWidget, bool isHighlighted, Color highlightColor)? ayahBuilder;
+  final Widget Function(
+    BuildContext context,
+    int surahNumber,
+    int verseNumber,
+    int pageNumber,
+    Widget ayahWidget,
+    bool isHighlighted,
+    Color highlightColor,
+  )?
+  ayahBuilder;
 
   /// Controller to programmatically scroll to a specific verse.
   final ItemScrollController? itemScrollController;
@@ -67,17 +83,35 @@ class QuranSurahListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Filter the global quran dataset for the current Surah directly in the build method
-    final List<dynamic> surahAyahs = quran.where((ayah) => ayah['sora'] == surahNumber).toList();
+    final List<dynamic> surahAyahs = quran
+        .where((ayah) => ayah['sora'] == surahNumber)
+        .toList();
 
     // Configure color filtering for dark mode support with QCF fonts.
     ColorFilter? textFilter;
     if (isDarkMode && isTajweed) {
       // Inverts brightness for dark mode while preserving the distinct Tajweed color hues
       textFilter = const ColorFilter.matrix([
-        -1, 0, 0, 0, 255,
-        0, -1, 0, 0, 255,
-        0, 0, -1, 0, 255,
-        0, 0, 0, 1, 0,
+        -1,
+        0,
+        0,
+        0,
+        255,
+        0,
+        -1,
+        0,
+        0,
+        255,
+        0,
+        0,
+        -1,
+        0,
+        255,
+        0,
+        0,
+        0,
+        1,
+        0,
       ]);
     } else if (isDarkMode && !isTajweed) {
       // Forces all text to be pure white
@@ -133,37 +167,61 @@ class QuranSurahListView extends StatelessWidget {
 
           // Separate the text from the glyph to allow independent styling
           if (hasGlyph) {
-            textWithoutGlyph = othmanicText.substring(0, othmanicText.length - glyph.length);
+            textWithoutGlyph = othmanicText.substring(
+              0,
+              othmanicText.length - glyph.length,
+            );
           }
 
-          final defaultStyle = ayahStyle ??
-              QuranTextStyles.qcfStyle(
-                height: 1.45,
-                pageNumber: pageNumber,
-              );
+          final defaultStyle =
+              ayahStyle ??
+              QuranTextStyles.qcfStyle(height: 1.45, pageNumber: pageNumber);
 
           // Apply requested font size and color filters to the main text
-          TextStyle mainTextStyle = defaultStyle.copyWith(height: null, fontSize: fontSize);
+          TextStyle mainTextStyle = defaultStyle.copyWith(
+            height: null,
+            fontSize: fontSize,
+          );
           if (textFilter != null) {
-            mainTextStyle = mainTextStyle.copyWith(color: null).merge(
-              TextStyle(foreground: Paint()..colorFilter = textFilter),
-            );
+            mainTextStyle = mainTextStyle
+                .copyWith(color: null)
+                .merge(
+                  TextStyle(foreground: Paint()..colorFilter = textFilter),
+                );
           }
 
           // Style for the Ayah Number end-glyph
           TextStyle numberTextStyle = defaultStyle.copyWith(height: null);
           if (isDarkMode) {
-            numberTextStyle = numberTextStyle.copyWith(color: null).merge(
-              TextStyle(
-                foreground: Paint()
-                  ..colorFilter = const ColorFilter.matrix([
-                    -1, 0, 0, 0, 255,
-                    0, -1, 0, 0, 255,
-                    0, 0, -1, 0, 255,
-                    0, 0, 0, 1, 0,
-                  ]),
-              ),
-            );
+            numberTextStyle = numberTextStyle
+                .copyWith(color: null)
+                .merge(
+                  TextStyle(
+                    foreground: Paint()
+                      ..colorFilter = const ColorFilter.matrix([
+                        -1,
+                        0,
+                        0,
+                        0,
+                        255,
+                        0,
+                        -1,
+                        0,
+                        0,
+                        255,
+                        0,
+                        0,
+                        -1,
+                        0,
+                        255,
+                        0,
+                        0,
+                        0,
+                        1,
+                        0,
+                      ]),
+                  ),
+                );
           } else {
             numberTextStyle = numberTextStyle.copyWith(
               color: Theme.of(context).primaryColor,
@@ -185,11 +243,17 @@ class QuranSurahListView extends StatelessWidget {
 
           // Check if this specific verse is marked for highlighting
           final isHighlighted = highlights.any(
-                (h) => h.surah == surahNumber && h.verseNumber == verseNumber,
+            (h) => h.surah == surahNumber && h.verseNumber == verseNumber,
           );
 
           final highlightColor = isHighlighted
-              ? highlights.firstWhere((h) => h.surah == surahNumber && h.verseNumber == verseNumber).color
+              ? highlights
+                    .firstWhere(
+                      (h) =>
+                          h.surah == surahNumber &&
+                          h.verseNumber == verseNumber,
+                    )
+                    .color
               : Colors.transparent;
 
           // Wrap the Ayah with Interaction (GestureDetector) and Highlight (Container) logic
@@ -199,24 +263,32 @@ class QuranSurahListView extends StatelessWidget {
             },
             child: ayahBuilder != null
                 ? ayahBuilder!(
-              context,
-              surahNumber,
-              verseNumber,
-              pageNumber,
-              preBuiltAyahWidget,
-              isHighlighted,
-              highlightColor,
-            )
+                    context,
+                    surahNumber,
+                    verseNumber,
+                    pageNumber,
+                    preBuiltAyahWidget,
+                    isHighlighted,
+                    highlightColor,
+                  )
                 : Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: isHighlighted ? highlightColor.withAlpha(76) : Colors.transparent,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: preBuiltAyahWidget,
-            ),
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isHighlighted
+                          ? highlightColor.withAlpha(76)
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: preBuiltAyahWidget,
+                  ),
           );
 
           // Return the widget directly without FutureBuilder or font checking
