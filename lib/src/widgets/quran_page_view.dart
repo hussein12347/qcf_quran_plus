@@ -33,12 +33,13 @@ class QuranPageView extends StatelessWidget {
   final Color? pageBackgroundColor;
   final bool isTajweed;
 
-  /// Optional override for the ayah-number glyph color.
+  /// Optional [ColorFilter] applied to the end-of-verse ayah-number glyph.
   ///
-  /// When non-null, the end-of-verse number circle is tinted with this
-  /// color via `ColorFilter.mode(srcIn)` so host apps can match it to
-  /// their palette without forking the package.
-  final Color? ayahNumberColor;
+  /// When non-null, this filter overrides the default light/dark behavior
+  /// for the number glyph only. Pass [ColorFilter.mode] for a flat color,
+  /// or [ColorFilter.matrix] for a hue rotation that preserves the
+  /// glyph's internal shading.
+  final ColorFilter? ayahNumberFilter;
 
   // Pre-loaded list of Quran pages
   final List<QuranPage> pages;
@@ -59,7 +60,7 @@ class QuranPageView extends StatelessWidget {
     this.pageBackgroundColor,
     this.isTajweed = true,
     required this.isDarkMode,
-    this.ayahNumberColor,
+    this.ayahNumberFilter,
   }) : pages = _loadQuranData(quranPagesCount);
 
   /// Static helper method to load the Quran pages only once upon widget initialization.
@@ -111,7 +112,7 @@ class QuranPageView extends StatelessWidget {
                     basmallahBuilder: basmallahBuilder,
                     ayahStyle: ayahStyle,
                     isDark: isDarkMode,
-                    ayahNumberColor: ayahNumberColor,
+                    ayahNumberFilter: ayahNumberFilter,
                   ),
                 ),
 
@@ -143,8 +144,8 @@ class QuranSinglePageWidget extends StatelessWidget {
   final bool isTajweed;
   final bool isDark;
 
-  /// See [QuranPageView.ayahNumberColor].
-  final Color? ayahNumberColor;
+  /// See [QuranPageView.ayahNumberFilter].
+  final ColorFilter? ayahNumberFilter;
 
   const QuranSinglePageWidget({
     super.key,
@@ -158,7 +159,7 @@ class QuranSinglePageWidget extends StatelessWidget {
     this.ayahStyle,
     required this.isDark,
     this.isTajweed = true,
-    this.ayahNumberColor,
+    this.ayahNumberFilter,
   });
 
   @override
@@ -321,7 +322,7 @@ class QuranSinglePageWidget extends StatelessWidget {
         ayahStyle: ayahStyle,
         isTajweed: isTajweed,
         isDark: isDark,
-        ayahNumberColor: ayahNumberColor,
+        ayahNumberFilter: ayahNumberFilter,
       ),
     );
   }

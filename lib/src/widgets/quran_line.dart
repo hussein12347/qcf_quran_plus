@@ -19,7 +19,7 @@ class QuranLine extends StatefulWidget {
     this.ayahStyle,
     this.isTajweed = true,
     this.isDark = false,
-    this.ayahNumberColor,
+    this.ayahNumberFilter,
   });
 
   final Line line;
@@ -35,15 +35,15 @@ class QuranLine extends StatefulWidget {
   final bool isTajweed;
   final bool isDark;
 
-  /// Optional override for the ayah-number glyph color.
+  /// Optional [ColorFilter] applied to the end-of-verse number glyph.
   ///
-  /// When non-null, the ayah-number circle (end-of-verse glyph) is tinted
-  /// with `ColorFilter.mode(ayahNumberColor, srcIn)` regardless of
-  /// [isDark] / [isTajweed]. This lets host apps recolor the glyph to
-  /// match their palette without forking the package.
+  /// When non-null, this filter overrides the default light/dark behavior
+  /// for the ayah-number glyph only. Pass any [ColorFilter] — for example
+  /// [ColorFilter.mode] for a flat color, or [ColorFilter.matrix] for a
+  /// hue rotation that preserves the glyph's internal shading.
   ///
   /// Defaults to `null` (preserves the original light/dark behavior).
-  final Color? ayahNumberColor;
+  final ColorFilter? ayahNumberFilter;
 
   @override
   State<QuranLine> createState() => _QuranLineState();
@@ -159,18 +159,16 @@ class _QuranLineState extends State<QuranLine> {
           }
 
           TextStyle numberTextStyle = finalStyle.copyWith(height: null);
-          if (widget.ayahNumberColor != null) {
-            // Custom ayah-number color overrides every other behavior so
-            // host apps can match the glyph to their palette.
+          if (widget.ayahNumberFilter != null) {
+            // Custom ayah-number filter overrides every other behavior so
+            // host apps can recolor the glyph (e.g. via hue rotation) to
+            // match their palette.
             numberTextStyle = numberTextStyle
                 .copyWith(color: null)
                 .merge(
                   TextStyle(
                     foreground: Paint()
-                      ..colorFilter = ColorFilter.mode(
-                        widget.ayahNumberColor!,
-                        BlendMode.srcIn,
-                      ),
+                      ..colorFilter = widget.ayahNumberFilter!,
                   ),
                 );
           } else if (widget.isDark) {
