@@ -19,6 +19,7 @@ class QuranLine extends StatefulWidget {
     this.ayahStyle,
     this.isTajweed = true,
     this.isDark = false,
+    this.ayahNumberColor,
   });
 
   final Line line;
@@ -33,6 +34,16 @@ class QuranLine extends StatefulWidget {
   final TextStyle? ayahStyle;
   final bool isTajweed;
   final bool isDark;
+
+  /// Optional override for the ayah-number glyph color.
+  ///
+  /// When non-null, the ayah-number circle (end-of-verse glyph) is tinted
+  /// with `ColorFilter.mode(ayahNumberColor, srcIn)` regardless of
+  /// [isDark] / [isTajweed]. This lets host apps recolor the glyph to
+  /// match their palette without forking the package.
+  ///
+  /// Defaults to `null` (preserves the original light/dark behavior).
+  final Color? ayahNumberColor;
 
   @override
   State<QuranLine> createState() => _QuranLineState();
@@ -148,7 +159,21 @@ class _QuranLineState extends State<QuranLine> {
           }
 
           TextStyle numberTextStyle = finalStyle.copyWith(height: null);
-          if (widget.isDark) {
+          if (widget.ayahNumberColor != null) {
+            // Custom ayah-number color overrides every other behavior so
+            // host apps can match the glyph to their palette.
+            numberTextStyle = numberTextStyle
+                .copyWith(color: null)
+                .merge(
+                  TextStyle(
+                    foreground: Paint()
+                      ..colorFilter = ColorFilter.mode(
+                        widget.ayahNumberColor!,
+                        BlendMode.srcIn,
+                      ),
+                  ),
+                );
+          } else if (widget.isDark) {
             numberTextStyle = numberTextStyle
                 .copyWith(color: null)
                 .merge(
