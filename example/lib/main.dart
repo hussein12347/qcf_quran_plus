@@ -266,6 +266,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
               ],
             ),
+            const SizedBox(height: 12),
+            _buildNavButton(
+              context,
+              title: 'صفحتان متقابلتان (تابلت)',
+              icon: Icons.chrome_reader_mode_outlined,
+              color: const Color(0xFF6D4C41),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const FacingMushafScreen(),
+                ),
+              ),
+            ),
             const SizedBox(height: 25),
 
             // --- Statistics Section ---
@@ -953,6 +966,145 @@ class _MushafScreenState extends State<MushafScreen> {
                   .toList();
             }
             _showAyahDetails(context, surahNumber, verseNumber, currentPage);
+          },
+        ),
+      ),
+    );
+  }
+}
+
+// =============================================================================
+// Facing Mushaf Screen (two-page tablet mode)
+// =============================================================================
+class FacingMushafScreen extends StatefulWidget {
+  final int initialPage;
+
+  const FacingMushafScreen({super.key, this.initialPage = 1});
+
+  @override
+  State<FacingMushafScreen> createState() => _FacingMushafScreenState();
+}
+
+class _FacingMushafScreenState extends State<FacingMushafScreen> {
+  late PageController _pageController;
+  late ValueNotifier<List<HighlightVerse>> _activeHighlightsNotifier;
+  late ValueNotifier<String> _spreadLabelNotifier;
+
+  @override
+  void initState() {
+    super.initState();
+    final spreadIndex = mushafPageToSpreadIndex(widget.initialPage);
+    _pageController = PageController(initialPage: spreadIndex);
+    _activeHighlightsNotifier = ValueNotifier([]);
+    _spreadLabelNotifier = ValueNotifier(_labelForSpread(spreadIndex));
+  }
+
+  String _labelForSpread(int spreadIndex) {
+    final pages = spreadIndexToPages(spreadIndex);
+    if (pages.leftPage == null) {
+      return 'صفحة ${pages.rightPage}';
+    }
+    if (pages.rightPage == null) {
+      return 'صفحة ${pages.leftPage}';
+    }
+    return 'صفحتا ${pages.leftPage} – ${pages.rightPage}';
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    _activeHighlightsNotifier.dispose();
+    _spreadLabelNotifier.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    return Scaffold(
+      appBar: AppBar(
+        title: ValueListenableBuilder<String>(
+          valueListenable: _spreadLabelNotifier,
+          builder: (context, label, child) {
+            return Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                label,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+            );
+          },
+        ),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.format_color_reset),
+            onPressed: () => _activeHighlightsNotifier.value = [],
+          ),
+        ],
+      ),
+      body: SafeArea(
+        child: ValueListenableBuilder<List<HighlightVerse>>(
+          valueListenable: _activeHighlightsNotifier,
+          builder: (context, highlights, _) {
+            return QuranFacingPagesView(
+              isDarkMode: isDarkMode,
+              isTajweed: true,
+              pageController: _pageController,
+              highlights: highlights,
+              ayahStyle: TextStyle(
+                color: Theme.of(context).textTheme.bodyLarge!.color,
+              ),
+              onSpreadChanged: (leftPage, rightPage) {
+                if (leftPage == null) {
+                  _spreadLabelNotifier.value = 'صفحة $rightPage';
+                } else if (rightPage == null) {
+                  _spreadLabelNotifier.value = 'صفحة $leftPage';
+                } else {
+                  _spreadLabelNotifier.value =
+                      'صفحتا $leftPage – $rightPage';
+                }
+              },
+              onLongPress: (surahNumber, verseNumber, details) {
+                final spreadIndex = _pageController.hasClients
+                    ? (_pageController.page?.round() ?? 0)
+                    : mushafPageToSpreadIndex(widget.initialPage);
+                final currentPage = primaryPageForSpread(spreadIndex);
+                final isHighlighted = _activeHighlightsNotifier.value.any(
+                  (e) => e.surah == surahNumber && e.verseNumber == verseNumber,
+                );
+
+                if (!isHighlighted) {
+                  _activeHighlightsNotifier.value = [
+                    ..._activeHighlightsNotifier.value,
+                    HighlightVerse(
+                      surah: surahNumber,
+                      verseNumber: verseNumber,
+                      page: currentPage,
+                      color: isDarkMode
+                          ? const Color(0xFFD4AF37).withValues(alpha: 0.3)
+                          : const Color(0xFF8D6E63).withValues(alpha: 0.2),
+                    ),
+                  ];
+                } else {
+                  _activeHighlightsNotifier.value = _activeHighlightsNotifier
+                      .value
+                      .where(
+                        (e) =>
+                            e.surah != surahNumber ||
+                            e.verseNumber != verseNumber,
+                      )
+                      .toList();
+                }
+              },
+            );
           },
         ),
       ),

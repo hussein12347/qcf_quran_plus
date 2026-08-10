@@ -37,6 +37,7 @@ Designed for professional Islamic applications, this package provides a fully of
 - **🔍 Smart Offline Search:** Fast, diacritic-insensitive Arabic search with automatic text normalization.
 - **🎯 Dynamic Highlighting:** Pass a list of highlights to seamlessly integrate audio-syncing and bookmarks.
 - **📜 Vertical Reading Mode:** Scrollable Surah lists ideal for Tafsir, translation, and audio players.
+- **📱 Facing Pages (Tablet):** Authentic Madani two-page spreads for large screens via `QuranFacingPagesView`.
 - **📊 Comprehensive Metadata:** Instant access to Surah names, Juz, Quarter (Rub al-Hizb), Makki/Madani info, and page lookups.
 
 ---
@@ -114,7 +115,38 @@ QuranPageView(
 );
 ```
 
-### 📜 3. Vertical Surah List Mode
+### 📱 3. Facing Pages Mode (Tablets / Wide Screens)
+Shows two Mushaf pages side-by-side with authentic Madani pairing (page 1 alone, then 2|3, 4|5, …, 604 alone).
+
+`PageController` indexes **spreads**, not mushaf pages — convert with the helpers below. Use `shouldUseFacingPages(context)` to opt in on tablets.
+
+```dart
+final int startPage = 2;
+final PageController _controller = PageController(
+  initialPage: mushafPageToSpreadIndex(startPage),
+);
+List<HighlightVerse> _activeHighlights = [];
+
+if (shouldUseFacingPages(context)) {
+  QuranFacingPagesView(
+    pageController: _controller,
+    highlights: _activeHighlights,
+    isDarkMode: Theme.of(context).brightness == Brightness.dark,
+    isTajweed: true,
+    onPageChanged: (pageNumber) {
+      // Primary (usually right/recto) page of the visible spread
+      print('Focused page: $pageNumber');
+    },
+    onSpreadChanged: (leftPage, rightPage) {
+      print('Spread: left=$leftPage right=$rightPage');
+    },
+  );
+} else {
+  // Fall back to single-page QuranPageView on phones
+}
+```
+
+### 📜 4. Vertical Surah List Mode
 Perfect for reading continuous Surahs, translating, or syncing with an audio player.
 
 ```dart
@@ -145,7 +177,7 @@ QuranSurahListView(
 );
 ```
 
-### 🎯 4. Dynamic Ayah Highlighting
+### 🎯 5. Dynamic Ayah Highlighting
 Change highlights dynamically to keep your audio-sync tracking smooth or to mark saved bookmarks.
 
 ```dart
@@ -165,7 +197,7 @@ setState(() {
 // setState(() => _activeHighlights = []);
 ```
 
-### 🔍 5. Smart Arabic Search
+### 🔍 6. Smart Arabic Search
 A fast, diacritic-insensitive search engine that normalizes Arabic text (Alef, Ya, Hamza).
 
 ```dart
@@ -186,7 +218,7 @@ for (var match in results['result']) {
 }
 ```
 
-### 📊 6. Core Metadata API & Helpers
+### 📊 7. Core Metadata API & Helpers
 Access comprehensive Quranic data instantly without parsing large JSON files.
 
 ```dart

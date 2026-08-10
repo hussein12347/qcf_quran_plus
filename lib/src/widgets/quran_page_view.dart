@@ -150,17 +150,35 @@ class QuranSinglePageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final deviceSize = MediaQuery.of(context).size;
     final orientation = MediaQuery.of(context).orientation;
 
-    // RepaintBoundary isolates the page rendering to prevent unnecessary repaints of the whole screen
+    // Fill the parent (full screen or half of a facing spread) instead of
+    // forcing MediaQuery screen size — required for tablet dual-page layouts.
     return RepaintBoundary(
-      child: SizedBox(
-        height: deviceSize.height,
-        // The first two pages (Al-Fatihah and early Al-Baqarah) have a unique, centered layout
-        child: (pageIndex == 1 || pageIndex == 2)
-            ? _buildFirstTwoPages(context, deviceSize, isDark)
-            : _buildStandardPage(context, deviceSize, orientation, isDark),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final pageSize = Size(
+            constraints.maxWidth.isFinite
+                ? constraints.maxWidth
+                : MediaQuery.sizeOf(context).width,
+            constraints.maxHeight.isFinite
+                ? constraints.maxHeight
+                : MediaQuery.sizeOf(context).height,
+          );
+
+          return SizedBox(
+            width: pageSize.width,
+            height: pageSize.height,
+            child: (pageIndex == 1 || pageIndex == 2)
+                ? _buildFirstTwoPages(context, pageSize, isDark)
+                : _buildStandardPage(
+                    context,
+                    pageSize,
+                    orientation,
+                    isDark,
+                  ),
+          );
+        },
       ),
     );
   }
@@ -168,7 +186,7 @@ class QuranSinglePageWidget extends StatelessWidget {
   /// Builds the layout specifically for Page 1 (Al-Fatihah) and Page 2 (Al-Baqarah).
   Widget _buildFirstTwoPages(
     BuildContext context,
-    Size deviceSize,
+    Size pageSize,
     bool isDark,
   ) {
     return Center(
@@ -191,7 +209,7 @@ class QuranSinglePageWidget extends StatelessWidget {
               // Render the actual lines of the Quran text
               ...page.lines.map(
                 (line) =>
-                    _buildQuranLine(line, deviceSize, BoxFit.scaleDown, isDark),
+                    _buildQuranLine(line, BoxFit.scaleDown, isDark),
               ),
             ],
           ),
@@ -203,7 +221,7 @@ class QuranSinglePageWidget extends StatelessWidget {
   /// Builds the standard layout for pages 3 through 604.
   Widget _buildStandardPage(
     BuildContext context,
-    Size deviceSize,
+    Size pageSize,
     Orientation orientation,
     bool isDark,
   ) {
@@ -212,6 +230,12 @@ class QuranSinglePageWidget extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
+        final availableHeight = constraints.maxHeight.isFinite
+            ? constraints.maxHeight
+            : (orientation == Orientation.portrait
+                ? pageSize.height
+                : pageSize.width);
+
         return ListView.builder(
           // Disable scrolling in portrait mode (fits perfectly), enable in landscape
           physics: orientation == Orientation.portrait
@@ -231,11 +255,6 @@ class QuranSinglePageWidget extends StatelessWidget {
               }
             }
 
-            // Calculate available height based on screen orientation
-            double availableHeight = (orientation == Orientation.portrait
-                ? constraints.maxHeight
-                : deviceSize.width);
-
             // Calculate how much space is taken up by Surah headers/Basmallahs on this page
             // Note: Surah 9 (At-Tawbah) does not have a Basmallah
             double surahHeaderOffset =
@@ -248,6 +267,11 @@ class QuranSinglePageWidget extends StatelessWidget {
             int linesCount = page.lines.isNotEmpty ? page.lines.length : 1;
             double lineHeight =
                 (availableHeight - surahHeaderOffset) * 0.95 / linesCount;
+
+            final lineWidth = (constraints.maxWidth.isFinite
+                    ? constraints.maxWidth
+                    : pageSize.width) -
+                32;
 
             return Column(
               children: [
@@ -270,13 +294,12 @@ class QuranSinglePageWidget extends StatelessWidget {
 
                 // The actual line of Quranic text
                 SizedBox(
-                  width: deviceSize.width - 32, // Apply padding
+                  width: lineWidth > 0 ? lineWidth : pageSize.width,
                   height: lineHeight > 0
                       ? lineHeight
                       : 40, // Fallback height if calculations fail
                   child: _buildQuranLine(
                     line,
-                    deviceSize,
                     // If the line contains the end of an Ayah and is marked as centered, scale it down. Otherwise, stretch it to fill the line width (Justified text).
                     line.ayahs.isNotEmpty && line.ayahs.last.centered
                         ? BoxFit.scaleDown
@@ -295,7 +318,6 @@ class QuranSinglePageWidget extends StatelessWidget {
   /// Renders a single line of Quran text and handles highlights and interactions.
   Widget _buildQuranLine(
     Line line,
-    Size deviceSize,
     BoxFit boxFit,
     bool isDark,
   ) {

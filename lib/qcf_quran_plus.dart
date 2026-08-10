@@ -15,9 +15,11 @@ import 'package:qcf_quran_plus/src/data/suwar.dart';
 // 1. UI Widgets Exports
 // ---------------------------------------------------------------------------
 export 'src/widgets/quran_page_view.dart';
+export 'src/widgets/quran_facing_pages_view.dart';
 export 'src/widgets/quran_surah_list_view.dart';
 export 'src/utils/quran_text_styles.dart';
 export 'src/utils/font_loader_service.dart';
+export 'src/utils/facing_pages.dart';
 // ---------------------------------------------------------------------------
 // 2. Models Exports
 // ---------------------------------------------------------------------------
