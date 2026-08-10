@@ -121,12 +121,13 @@ class QuranFacingPagesView extends StatelessWidget {
           itemBuilder: (context, spreadIndex) {
             final pagesForSpread = spreadIndexToPages(spreadIndex);
 
-            // RTL Row: first child is on the RIGHT.
+            // Visual order: screen-left = odd page, screen-right = even page.
             return Column(
               children: [
                 ?topBar,
                 Expanded(
                   child: Row(
+                    textDirection: TextDirection.ltr,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Expanded(
