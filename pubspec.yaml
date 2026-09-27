@@ -1,0 +1,65 @@
+name: qcf_quran_plus
+description: offline Quran package with Hafs font and have tajweed.
+repository: https://github.com/hussein12347/qcf_quran_plus
+homepage: https://github.com/hussein12347/qcf_quran_plus/?tab=readme-ov-file
+#27-9-2026
+version: 0.0.9
+
+
+environment:
+  sdk: ^3.11.0
+  flutter: ">=1.17.0"
+
+dependencies:
+  archive: ^4.0.9
+  flutter:
+    sdk: flutter
+  path_provider: ^2.1.5
+  scrollable_positioned_list: ^0.3.8
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
+flutter:
+
+  # To add assets to your package, add an assets section, like this:
+  assets:
+    - assets/fonts/
+    - assets/surah_banner.png
+    - assets/fonts/qcf_tajweed/
+  #   - images/a_dot_ham.jpeg
+  #
+  # For details regarding assets in packages, see
+  # https://flutter.dev/to/asset-from-package
+  #
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/to/resolution-aware-images
+
+  # To add custom fonts to your package, add a fonts section here,
+  # in this "flutter" section. Each entry in this list should have a
+  # "family" key with the font family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the font. For
+  # example:
+  fonts:
+
+    - family: "arsura"
+      fonts:
+        - asset: assets/fonts/arsura.ttf
+    - family: "hafs"
+      fonts:
+        - asset: assets/fonts/HafsSmart_08.ttf
+    - family: "QCF4_BSML"
+      fonts:
+        - asset: assets/fonts/QCF4_BSML/QCF4_BSML.ttf
+
+
+  #
+  # For details regarding fonts in packages, see
+  # https://flutter.dev/to/font-from-package
