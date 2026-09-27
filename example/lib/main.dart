@@ -587,7 +587,7 @@ class _MetadataDemoCardState extends State<_MetadataDemoCard> {
               children: [
                 Expanded(
                   child: DropdownButtonFormField<int>(
-                    value: _surah,
+                    initialValue: _surah,
                     isExpanded: true,
                     decoration: const InputDecoration(labelText: 'السورة'),
                     items: List.generate(
@@ -609,7 +609,7 @@ class _MetadataDemoCardState extends State<_MetadataDemoCard> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: DropdownButtonFormField<int>(
-                    value: safeAyah,
+                    initialValue: safeAyah,
                     isExpanded: true,
                     decoration: const InputDecoration(labelText: 'الآية'),
                     items: List.generate(

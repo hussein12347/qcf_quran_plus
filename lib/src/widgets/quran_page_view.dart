@@ -176,8 +176,9 @@ class _QuranPageViewState extends State<QuranPageView> {
   void _syncExternalToInternal() {
     if (_isSyncing ||
         !widget.pageController.hasClients ||
-        !_twoPageController.hasClients)
+        !_twoPageController.hasClients) {
       return;
+    }
     _isSyncing = true;
     final int targetPair = widget.pageController.page!.round() ~/ 2;
     if (_twoPageController.page?.round() != targetPair) {
@@ -190,8 +191,9 @@ class _QuranPageViewState extends State<QuranPageView> {
   void _syncInternalToExternal() {
     if (_isSyncing ||
         !widget.pageController.hasClients ||
-        !_twoPageController.hasClients)
+        !_twoPageController.hasClients) {
       return;
+    }
     _isSyncing = true;
     final int targetSingle = (_twoPageController.page!.round() * 2);
     if (widget.pageController.page?.round() != targetSingle) {

@@ -1,5 +1,4 @@
 import '../../../qcf_quran_plus.dart';
-import 'package:flutter/foundation.dart';
 
 /// Matches Quranic symbols used in the normalized text representation.
 final _symbolRegex = RegExp(r'[\u06D6-\u06DC\u06DE\u06E9]');

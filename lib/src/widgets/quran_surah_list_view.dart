@@ -4,8 +4,6 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../qcf_quran_plus.dart';
 import '../data/quran_data.dart';
-import '../models/highlight_verse.dart';
-import '../models/highlight_word.dart';
 import '../widgets/bsmallah_widget.dart';
 import '../widgets/surah_header_widget.dart';
 
