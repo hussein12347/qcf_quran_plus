@@ -324,6 +324,104 @@ QuranPageView(
 
 The widget keeps the two-page controller synchronized with the external `PageController`.
 
+### Deferred Page Construction
+
+`QuranPageView` supports deferred page construction to improve performance during rapid page navigation.
+
+When enabled, newly appearing Quran pages are not fully built while the user is actively swiping. Their content is rendered after scrolling has settled.
+
+This can reduce unnecessary page construction and help keep page navigation smooth, especially on devices where Quran page rendering is relatively expensive.
+
+The feature is enabled by default:
+
+```dart
+QuranPageView(
+  pageController: _controller,
+  highlights: _activeHighlights,
+  isDarkMode: false,
+  deferNewPages: true,
+  deferDelay: const Duration(milliseconds: 50),
+);
+```
+
+#### `deferNewPages`
+
+Controls whether newly appearing pages should defer their content construction while the user is scrolling.
+
+```dart
+deferNewPages: true,
+```
+
+When `true`, pages that appear during an active swipe are temporarily kept lightweight. Their Quran content is built after scrolling has settled.
+
+The currently displayed page remains available while navigating.
+
+The default value is:
+
+```dart
+true
+```
+
+To disable deferred page construction and build pages immediately:
+
+```dart
+QuranPageView(
+  pageController: _controller,
+  highlights: _activeHighlights,
+  isDarkMode: false,
+  deferNewPages: false,
+);
+```
+
+You can also change this value at runtime.
+
+---
+
+#### `deferDelay`
+
+Controls how long `QuranPageView` waits after scrolling ends before deferred page content is built.
+
+The default value is:
+
+```dart
+const Duration(milliseconds: 50)
+```
+
+Example:
+
+```dart
+QuranPageView(
+  pageController: _controller,
+  highlights: _activeHighlights,
+  isDarkMode: false,
+  deferNewPages: true,
+  deferDelay: const Duration(milliseconds: 50),
+);
+```
+
+You can increase the delay if you want to wait longer before constructing pages after a swipe:
+
+```dart
+QuranPageView(
+  pageController: _controller,
+  highlights: _activeHighlights,
+  isDarkMode: false,
+  deferNewPages: true,
+  deferDelay: const Duration(milliseconds: 100),
+);
+```
+
+If the user starts another swipe before `deferDelay` finishes, the pending page build is cancelled and the delay starts again after the new scrolling operation ends.
+
+This prevents pages from being unnecessarily constructed while the user is rapidly flipping through multiple Quran pages.
+
+`deferDelay` is only used when:
+
+```dart
+deferNewPages: true
+```
+
+The deferred page construction optimization works with both the single-page and two-page layouts.
 ---
 
 ## 🧩 Mushaf Customization

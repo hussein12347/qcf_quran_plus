@@ -5,76 +5,125 @@ import 'dart:isolate';
 import 'package:archive/archive.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:qcf_quran_plus/src/widgets/quran_page/quran_repository.dart';
 
-enum FontStorageMode { permanentDisk, memoryOnly }
+/// Defines where QCF fonts are stored after extraction.
+enum FontStorageMode {
+  /// Fonts are persisted to the application documents directory so they can
+  /// be reused across app launches without re-extracting from the bundle.
+  permanentDisk,
 
-/// Manages lazy loading, registration, and variant generation for the Quran font set.
+  /// Fonts are kept only in memory for the current session. Nothing is
+  /// written to disk. Useful for environments where disk access is restricted.
+  memoryOnly,
+}
+
+/// A service responsible for loading, extracting, and registering QCF
+/// (Quran Complex Font) font families for every page of the Quran.
 ///
-/// Each page is stored under a canonical family name and then cloned into alternate
-/// variants such as dark mode, no-tajweed, and red-highlight styles. Fonts can be
-/// cached on disk or kept in memory depending on the configured storage mode.
+/// The loader supports multiple variants per page:
+/// - Tajweed light (default colored Tajweed rendering).
+/// - Tajweed dark (recolored for dark backgrounds).
+/// - No-Tajweed light (uniform black glyphs).
+/// - No-Tajweed dark (uniform white glyphs).
+/// - Red variant (uniform red glyphs, used for special highlights).
+///
+/// Fonts are shipped gzip-compressed inside the package assets. They can be
+/// extracted and cached either to disk ([FontStorageMode.permanentDisk]) or
+/// kept in memory ([FontStorageMode.memoryOnly]).
+///
+/// All public methods are static and thread-safe with respect to repeated
+/// calls, since in-flight loads are coalesced through [_loadingTasks].
 class QcfFontLoader {
+  /// Private constructor to prevent instantiation.
   QcfFontLoader._();
 
+  /// In-flight font load tasks, keyed by page number.
+  /// Used to prevent duplicate work when the same page is requested
+  /// multiple times concurrently.
   static final Map<int, Future<void>> _loadingTasks = {};
+
+  /// Set of pages whose fonts have already been fully registered.
   static final Set<int> _loadedPages = {};
 
+  /// Current storage mode. Set by [setupFontsAtStartup] and reused elsewhere.
   static FontStorageMode _currentMode = FontStorageMode.permanentDisk;
 
+  /// Total number of pages in the standard Quran.
   static const int totalPages = 604;
 
+  /// Cached directory where font files are stored when using
+  /// [FontStorageMode.permanentDisk]. Reused to avoid repeated IO lookups.
   static Directory? _fontDirCache;
+
+  /// Monotonic generation counter used to cancel stale preload operations.
   static int _generation = 0;
 
-  /// Returns the base family name for the given Quran page.
+  /// Returns the base font family name for the given [pageNumber].
+  ///
+  /// Example: page 7 → `QCF4007_COLOR-Regular`.
   static String getBaseFontFamily(int pageNumber) {
     return 'QCF4${pageNumber.toString().padLeft(3, '0')}_COLOR-Regular';
   }
 
-  /// Returns the light tajweed variant for the specified page.
+  /// Returns the family name for the Tajweed light variant.
+  ///
+  /// This is identical to the base family (the packaged font already
+  /// contains the light Tajweed colors).
   static String getTajweedLightFamily(int pageNumber) {
     return getBaseFontFamily(pageNumber);
   }
 
-  /// Returns the dark tajweed variant for the specified page.
+  /// Returns the family name for the Tajweed dark variant.
   static String getTajweedDarkFamily(int pageNumber) {
     return '${getBaseFontFamily(pageNumber)}-d';
   }
 
-  /// Returns the light no-tajweed variant for the specified page.
+  /// Returns the family name for the no-Tajweed light variant.
   static String getNoTajweedLightFamily(int pageNumber) {
     return '${getBaseFontFamily(pageNumber)}-n';
   }
 
-  /// Returns the dark no-tajweed variant for the specified page.
+  /// Returns the family name for the no-Tajweed dark variant.
   static String getNoTajweedDarkFamily(int pageNumber) {
     return '${getBaseFontFamily(pageNumber)}-nd';
   }
 
-  /// Returns the red-highlight variant for the specified page.
+  /// Returns the family name for the red variant.
   static String getRedFamily(int pageNumber) {
     return '${getBaseFontFamily(pageNumber)}-nr';
   }
 
   /// Loads the configured font set during startup while reporting progress.
   ///
-  /// If all pages already exist in the persistent font directory, the loader reuses
-  /// them instead of re-extracting and writing them again. Otherwise, it loads the
-  /// entire set sequentially so the UI can observe a meaningful progress callback.
+  /// Quran page data (word offsets + parsed lines) is loaded **in parallel**
+  /// with the fonts because it runs in a separate isolate via `compute`.
+  /// This reduces total startup time to `max(fontsTime, quranTime)` instead
+  /// of `fontsTime + quranTime`.
   static Future<void> setupFontsAtStartup({
     required Function(double progress) onProgress,
     FontStorageMode mode = FontStorageMode.permanentDisk,
   }) async {
     _currentMode = mode;
 
+    // ── Start loading the Quran data in parallel with the fonts ──
+    // `ensureLoaded` calls `compute(...)` on a separate isolate, so it does
+    // not block the main isolate and does not compete with the font loading
+    // work on the same CPU.
+    final Future<void> quranLoadFuture =
+        QuranRepository.instance.ensureLoaded(totalPages);
+    // ─────────────────────────────────────────────────────────────
+
     Directory? fontDir;
 
+    // Resolve the on-disk font directory only when using permanent storage.
     if (_currentMode == FontStorageMode.permanentDisk) {
       fontDir = await _getFontDirectory();
     }
 
     int existingFontsCount = 0;
 
+    // Count how many font files already exist on disk (batched for speed).
     if (fontDir != null) {
       const probeBatch = 64;
 
@@ -84,8 +133,10 @@ class QcfFontLoader {
         final checks = <Future<bool>>[];
 
         for (int page = start; page <= end; page++) {
-          final file = File('${fontDir.path}/${getBaseFontFamily(page)}.ttf');
+          final file =
+              File('${fontDir.path}/${getBaseFontFamily(page)}.ttf');
 
+          // A file is considered valid only if it exists and is non-trivial.
           checks.add(() async {
             if (!await file.exists()) {
               return false;
@@ -101,6 +152,8 @@ class QcfFontLoader {
     }
 
     if (existingFontsCount == totalPages) {
+      // Fast path: every font file is already on disk. Load them in batches
+      // to reduce the number of awaits and report progress after each batch.
       const batchSize = 25;
 
       for (int start = 1; start <= totalPages; start += batchSize) {
@@ -117,14 +170,24 @@ class QcfFontLoader {
         onProgress(end / totalPages);
       }
     } else {
+      // Slow path: some fonts are missing. Load them one by one so progress
+      // can be reported accurately.
       for (int page = 1; page <= totalPages; page++) {
         await ensureFontLoaded(page);
         onProgress(page / totalPages);
       }
     }
+
+    // ── Ensure Quran data loading has completed before finishing the splash ──
+    // In practice the data is already ready (it is faster than the fonts),
+    // so this await returns immediately.
+    await quranLoadFuture;
+    // ────────────────────────────────────────────────────────────────────
   }
 
-  /// Returns the directory used for cached font files.
+  /// Returns the directory used to cache extracted font files.
+  ///
+  /// The directory is created on first use and cached for subsequent calls.
   static Future<Directory> _getFontDirectory() async {
     final cached = _fontDirCache;
 
@@ -136,6 +199,7 @@ class QcfFontLoader {
 
     final fontDir = Directory('${appDir.path}/qcf_fonts');
 
+    // Create the folder if it does not yet exist.
     if (!await fontDir.exists()) {
       await fontDir.create(recursive: true);
     }
@@ -145,21 +209,25 @@ class QcfFontLoader {
     return fontDir;
   }
 
-  /// Ensures a Quran page font is fully loaded and registered.
+  /// Ensures that the fonts for the given [pageNumber] are loaded and
+  /// registered with the Flutter engine.
   ///
-  /// If the page is already loaded or a task is already in progress, the existing
-  /// future is reused to avoid duplicate registration work.
+  /// - Returns an error future if [pageNumber] is out of range.
+  /// - Returns immediately if the fonts are already loaded.
+  /// - Coalesces concurrent requests for the same page.
   static Future<void> ensureFontLoaded(int pageNumber) {
     if (pageNumber < 1 || pageNumber > totalPages) {
       return Future.error(RangeError('Invalid Quran page: $pageNumber'));
     }
 
+    // Already fully loaded; nothing to do.
     if (_loadedPages.contains(pageNumber)) {
       return Future.value();
     }
 
     final existingTask = _loadingTasks[pageNumber];
 
+    // Reuse an in-flight task if one exists.
     if (existingTask != null) {
       return existingTask;
     }
@@ -170,25 +238,31 @@ class QcfFontLoader {
 
     task
         .then((_) {
+          // Mark as loaded once the task completes successfully.
           _loadedPages.add(pageNumber);
         })
         .whenComplete(() {
+          // Always clear the in-flight entry, whether success or failure.
           _loadingTasks.remove(pageNumber);
         });
 
     return task;
   }
 
-  /// Returns true when the requested Quran page font has already been registered.
+  /// Whether the fonts for [pageNumber] are already loaded.
   static bool isFontLoaded(int pageNumber) {
     return _loadedPages.contains(pageNumber);
   }
 
-  /// Prefetches the current page and nearby pages for a smoother reading experience.
+  /// Preloads fonts for pages near [currentPage] within [radius] pages.
   ///
-  /// The generation token guards against stale preloading calls when the user moves
-  /// to another page while asynchronous loads are still running.
+  /// This is typically called as the user navigates to keep the pages
+  /// immediately before and after the current one ready to render.
+  ///
+  /// A generation counter is used so that a newer preload request cancels
+  /// any older in-progress preload, avoiding wasted work after rapid swipes.
   static Future<void> preloadPages(int currentPage, {int radius = 5}) async {
+    // Clamp the requested page into the valid range.
     if (currentPage < 1) {
       currentPage = 1;
     }
@@ -197,16 +271,19 @@ class QcfFontLoader {
       currentPage = totalPages;
     }
 
+    // Claim a new generation and invalidate previous preloads.
     final myGeneration = ++_generation;
 
     await ensureFontLoaded(currentPage);
 
+    // Abort if a newer preload has started while we were loading.
     if (myGeneration != _generation) {
       return;
     }
 
     final neighbors = <int>[];
 
+    // Collect pages around the current one, alternating forward/backward.
     for (int i = 1; i <= radius; i++) {
       final next = currentPage + i;
       final previous = currentPage - i;
@@ -221,14 +298,17 @@ class QcfFontLoader {
     }
 
     for (final page in neighbors) {
+      // Abort the entire preload if a newer one has started.
       if (myGeneration != _generation) {
         return;
       }
 
+      // Skip pages that are already loaded or currently loading.
       if (_loadedPages.contains(page) || _loadingTasks.containsKey(page)) {
         continue;
       }
 
+      // Yield to the event loop so the UI stays responsive.
       await Future<void>.delayed(Duration.zero);
 
       if (myGeneration != _generation) {
@@ -239,7 +319,13 @@ class QcfFontLoader {
     }
   }
 
-  /// Loads and registers every generated variant for a single Quran page.
+  /// Performs the actual font loading for a single [pageNumber].
+  ///
+  /// Steps:
+  /// 1. Try to read the extracted font from disk (only in disk mode).
+  /// 2. If missing, decompress the bundled `.ttf.gz` and extract it.
+  /// 3. Register the base (Tajweed light) family with the engine.
+  /// 4. Derive and register the other variants (dark, no-Tajweed, red).
   static Future<void> _loadFontInternal(int pageNumber) async {
     final fontName = getBaseFontFamily(pageNumber);
 
@@ -251,8 +337,10 @@ class QcfFontLoader {
       final file = File(fontPath);
 
       if (await file.exists() && await file.length() > 1000) {
+        // Fast path: reuse the previously extracted font file.
         fontBytes = await file.readAsBytes();
       } else {
+        // Extract the bundled font, then write it to disk off the main isolate.
         final gzipBytes = await _loadCompressedFont(fontName);
         fontBytes = await Isolate.run(() {
           final extracted = _extractFont(gzipBytes);
@@ -262,18 +350,22 @@ class QcfFontLoader {
         });
       }
     } else {
+      // Memory-only mode: always extract from the bundled asset.
       final gzipBytes = await _loadCompressedFont(fontName);
       fontBytes = await Isolate.run(() => _extractFont(gzipBytes));
     }
 
+    // Register the base (Tajweed light) family.
     await _registerFont(fontBytes, getTajweedLightFamily(pageNumber));
 
+    // Derive the Tajweed dark variant by recoloring only the base color.
     final darkBytes = _modifyCpalBaseColor(
       Uint8List.fromList(fontBytes),
       const Color(0xFFFFFFFF),
     );
     await _registerFont(darkBytes, getTajweedDarkFamily(pageNumber));
 
+    // Derive the no-Tajweed light variant (uniform black glyphs).
     final noTajweedLightBytes = _modifyCpalAllColors(
       Uint8List.fromList(fontBytes),
       const Color(0xFF000000),
@@ -283,12 +375,14 @@ class QcfFontLoader {
       getNoTajweedLightFamily(pageNumber),
     );
 
+    // Derive the no-Tajweed dark variant (uniform white glyphs).
     final noTajweedDarkBytes = _modifyCpalAllColors(
       Uint8List.fromList(fontBytes),
       const Color(0xFFFFFFFF),
     );
     await _registerFont(noTajweedDarkBytes, getNoTajweedDarkFamily(pageNumber));
 
+    // Derive the red variant (uniform red glyphs, used for special highlights).
     final redBytes = _modifyCpalAllColors(
       Uint8List.fromList(fontBytes),
       const Color(0xFFFF0000),
@@ -296,7 +390,7 @@ class QcfFontLoader {
     await _registerFont(redBytes, getRedFamily(pageNumber));
   }
 
-  /// Registers a font blob under the provided family name for Flutter text rendering.
+  /// Registers the given [fontBytes] with the Flutter engine under [family].
   static Future<void> _registerFont(Uint8List fontBytes, String family) async {
     final loader = FontLoader(family);
     final byteData = ByteData.view(
@@ -308,7 +402,7 @@ class QcfFontLoader {
     await loader.load();
   }
 
-  /// Loads a compressed font asset from the package bundle.
+  /// Loads the gzip-compressed font asset for [fontName] from the package.
   static Future<Uint8List> _loadCompressedFont(String fontName) async {
     final data = await rootBundle.load(
       'packages/qcf_quran_plus/assets/fonts/qcf_tajweed/$fontName.ttf.gz',
@@ -316,18 +410,22 @@ class QcfFontLoader {
     return data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
   }
 
-  /// Decompresses a GZip-compressed font payload to raw TrueType bytes.
+  /// Decompresses a gzip-compressed font byte array.
   static Uint8List _extractFont(Uint8List gzipBytes) {
     final decompressed = const GZipDecoder().decodeBytes(gzipBytes);
     return Uint8List.fromList(decompressed);
   }
 
-  /// Replaces dark base palette entries with the provided color while preserving the
-  /// rest of the font data intact.
+  /// Recolors only the "base color" entries of the font's CPAL table.
+  ///
+  /// A base color is considered to be a near-black entry with high opacity.
+  /// This is used to build the Tajweed dark variant, which keeps the Tajweed
+  /// palette but swaps the base text color to [newBaseColor].
   static Uint8List _modifyCpalBaseColor(
     Uint8List fontBytes,
     Color newBaseColor,
   ) {
+    // The font header must be at least 12 bytes long to contain the numTables field.
     if (fontBytes.length < 12) return fontBytes;
 
     final bd = ByteData.view(
@@ -338,8 +436,9 @@ class QcfFontLoader {
     final numTables = bd.getUint16(4);
     int? cpalOffset;
     int? cpalLength;
-    const cpalTag = 0x4350414C;
+    const cpalTag = 0x4350414C; // 'CPAL' in big-endian
 
+    // Walk the table directory to locate the CPAL table.
     for (int i = 0; i < numTables; i++) {
       final recordOffset = 12 + i * 16;
       if (recordOffset + 16 > fontBytes.length) break;
@@ -351,6 +450,7 @@ class QcfFontLoader {
       }
     }
 
+    // Bail out safely if the CPAL table is missing or bounds are invalid.
     if (cpalOffset == null || cpalLength == null) return fontBytes;
     if (cpalOffset + cpalLength > fontBytes.length) return fontBytes;
     if (cpalOffset + 12 > fontBytes.length) return fontBytes;
@@ -359,6 +459,7 @@ class QcfFontLoader {
     final colorRecordsArrayOffset = bd.getUint32(cpalOffset + 8);
     final absoluteOffset = cpalOffset + colorRecordsArrayOffset;
 
+    // Convert the Flutter color into its BGRA byte representation.
     final newR = (newBaseColor.r * 255).round();
     final newG = (newBaseColor.g * 255).round();
     final newB = (newBaseColor.b * 255).round();
@@ -368,11 +469,13 @@ class QcfFontLoader {
       final colorOffset = absoluteOffset + i * 4;
       if (colorOffset + 4 > fontBytes.length) break;
 
+      // CPAL stores colors in BGRA order.
       final b = fontBytes[colorOffset];
       final g = fontBytes[colorOffset + 1];
       final r = fontBytes[colorOffset + 2];
       final a = fontBytes[colorOffset + 3];
 
+      // Only replace near-black, opaque entries.
       if (r <= 30 && g <= 30 && b <= 30 && a >= 200) {
         fontBytes[colorOffset] = newB;
         fontBytes[colorOffset + 1] = newG;
@@ -384,8 +487,12 @@ class QcfFontLoader {
     return fontBytes;
   }
 
-  /// Recolors all palette entries in the font to the provided color.
+  /// Recolors every entry in the font's CPAL table to a uniform [color].
+  ///
+  /// This is used to build the no-Tajweed and red variants, which need a
+  /// single flat color for every glyph regardless of the original palette.
   static Uint8List _modifyCpalAllColors(Uint8List fontBytes, Color color) {
+    // The font header must be at least 12 bytes long to contain the numTables field.
     if (fontBytes.length < 12) return fontBytes;
 
     final bd = ByteData.view(
@@ -396,8 +503,9 @@ class QcfFontLoader {
     final numTables = bd.getUint16(4);
     int? cpalOffset;
     int? cpalLength;
-    const cpalTag = 0x4350414C;
+    const cpalTag = 0x4350414C; // 'CPAL' in big-endian
 
+    // Walk the table directory to locate the CPAL table.
     for (int i = 0; i < numTables; i++) {
       final recordOffset = 12 + i * 16;
       if (recordOffset + 16 > fontBytes.length) break;
@@ -409,6 +517,7 @@ class QcfFontLoader {
       }
     }
 
+    // Bail out safely if the CPAL table is missing or bounds are invalid.
     if (cpalOffset == null || cpalLength == null) return fontBytes;
     if (cpalOffset + cpalLength > fontBytes.length) return fontBytes;
     if (cpalOffset + 12 > fontBytes.length) return fontBytes;
@@ -417,6 +526,7 @@ class QcfFontLoader {
     final colorRecordsArrayOffset = bd.getUint32(cpalOffset + 8);
     final absoluteOffset = cpalOffset + colorRecordsArrayOffset;
 
+    // Convert the Flutter color into its BGRA byte representation.
     final newR = (color.r * 255).round();
     final newG = (color.g * 255).round();
     final newB = (color.b * 255).round();
@@ -426,6 +536,7 @@ class QcfFontLoader {
       final colorOffset = absoluteOffset + i * 4;
       if (colorOffset + 4 > fontBytes.length) break;
 
+      // CPAL stores colors in BGRA order; overwrite every entry uniformly.
       fontBytes[colorOffset] = newB;
       fontBytes[colorOffset + 1] = newG;
       fontBytes[colorOffset + 2] = newR;
@@ -435,7 +546,11 @@ class QcfFontLoader {
     return fontBytes;
   }
 
-  /// Clears the in-memory and on-disk cache for all loaded fonts.
+  /// Clears any cached font data.
+  ///
+  /// - Invalidates any in-flight preload operations by bumping the generation.
+  /// - Deletes the on-disk font directory (only in permanent disk mode).
+  /// - Clears the in-memory tracking of loaded and loading pages.
   static Future<void> clearCache() async {
     _generation++;
 
@@ -447,7 +562,9 @@ class QcfFontLoader {
         if (await fontDir.exists()) {
           await fontDir.delete(recursive: true);
         }
-      } catch (_) {}
+      } catch (_) {
+        // Best-effort cleanup: ignore any IO errors here.
+      }
     }
 
     _fontDirCache = null;

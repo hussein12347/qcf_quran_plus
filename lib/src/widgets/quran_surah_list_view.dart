@@ -5,15 +5,26 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import '../../qcf_quran_plus.dart';
 import '../data/quran_data.dart';
 import '../widgets/bsmallah_widget.dart';
-import '../widgets/surah_header_widget.dart';
 
 /// A scrollable list view that renders the verses (Ayahs) of a specific Surah.
 ///
-/// This widget supports interactive word tapping, verse long-pressing, 
-/// custom highlight layers for both words and entire verses, and advanced 
+/// This widget supports interactive word tapping, verse long-pressing,
+/// custom highlight layers for both words and entire verses, and advanced
 /// QCF (Quran Complex Font) rendering with optional Tajweed coloring.
+///
+/// Key features:
+/// - RTL layout out of the box for Arabic Quranic text.
+/// - Custom surah header and Basmallah builders (defaults are provided).
+/// - Per-word highlighting via [wordHighlights].
+/// - Per-verse highlighting via [highlights].
+/// - Optional Tajweed coloring controlled by [isTajweed].
+/// - Programmatic scrolling through [itemScrollController] and observing
+///   visible items through [itemPositionsListener].
 class QuranSurahListView extends StatelessWidget {
   /// Creates a [QuranSurahListView].
+  ///
+  /// Only [surahNumber] and [highlights] are required. All other parameters
+  /// are optional and fall back to sensible defaults.
   const QuranSurahListView({
     super.key,
     required this.surahNumber,
@@ -48,7 +59,8 @@ class QuranSurahListView extends StatelessWidget {
     int surahNumber,
     int verseNumber,
     LongPressStartDetails details,
-  )? onLongPress;
+  )?
+  onLongPress;
 
   /// Callback triggered when a user taps on a specific word.
   /// Provides the Surah number, verse number, word index, and the raw word string.
@@ -57,19 +69,23 @@ class QuranSurahListView extends StatelessWidget {
     int verseNumber,
     int wordIndex,
     String word,
-  )? onWordTap;
+  )?
+  onWordTap;
 
-  /// Custom text style to apply to the verses. 
+  /// Custom text style to apply to the verses.
   /// Overrides the default QCF style if provided.
   final TextStyle? ayahStyle;
 
   /// A custom builder for the header of the Surah.
   /// If null, a default [SurahHeaderWidget] is used.
-  final Widget Function(BuildContext context, int surahNumber)? surahHeaderBuilder;
+  final Widget Function(BuildContext context, int surahNumber)?
+  surahHeaderBuilder;
 
   /// A custom builder for the Basmallah graphic/text.
-  /// If null, a default [BasmallahWidget] is used. Not displayed for Surah At-Tawbah (9).
-  final Widget Function(BuildContext context, int surahNumber)? basmallahBuilder;
+  /// If null, a default [BasmallahWidget] is used.
+  /// Not displayed for Surah At-Tawbah (9).
+  final Widget Function(BuildContext context, int surahNumber)?
+  basmallahBuilder;
 
   /// A custom builder for rendering the verse container.
   /// Allows wrapping the verse in custom decorations, padding, or interactive widgets.
@@ -81,7 +97,8 @@ class QuranSurahListView extends StatelessWidget {
     Widget ayahWidget,
     bool isHighlighted,
     Color highlightColor,
-  )? ayahBuilder;
+  )?
+  ayahBuilder;
 
   /// Controller to programmatically scroll to a specific verse index.
   final ItemScrollController? itemScrollController;
@@ -104,8 +121,11 @@ class QuranSurahListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Filter the global Quran dataset to only include ayahs for the requested Surah.
-    final surahAyahs = quran.where((ayah) => ayah['sora'] == surahNumber).toList();
+    final surahAyahs = quran
+        .where((ayah) => ayah['sora'] == surahNumber)
+        .toList();
 
+    // Force RTL direction so the Arabic text flows naturally right-to-left.
     return Directionality(
       textDirection: TextDirection.rtl,
       child: ScrollablePositionedList.builder(
@@ -113,6 +133,7 @@ class QuranSurahListView extends StatelessWidget {
         itemPositionsListener: itemPositionsListener,
         initialScrollIndex: initialScrollIndex,
         physics: const BouncingScrollPhysics(),
+        // Add 1 to the item count to reserve index 0 for the header section.
         itemCount: surahAyahs.length + 1,
         itemBuilder: (context, index) {
           // Index 0 is reserved for the Surah Header and Basmallah.
@@ -120,8 +141,10 @@ class QuranSurahListView extends StatelessWidget {
             return Column(
               children: [
                 const SizedBox(height: 16),
+                // Use the custom header builder when provided; otherwise, the default.
                 surahHeaderBuilder?.call(context, surahNumber) ??
                     SurahHeaderWidget(suraNumber: surahNumber),
+                // Surah At-Tawbah (9) does not begin with a Basmallah.
                 if (surahNumber != 9)
                   basmallahBuilder?.call(context, surahNumber) ??
                       BasmallahWidget(surahNumber),
@@ -134,40 +157,53 @@ class QuranSurahListView extends StatelessWidget {
           final ayahData = surahAyahs[index - 1];
           final verseNumber = ayahData['aya_no'] as int;
           final pageNumber = ayahData['page'] as int;
-          
+
+          // Normalize the plain Arabic text by collapsing newlines and trimming.
           final ayaText = ayahData['aya_text']
               .toString()
               .replaceAll('\n', ' ')
               .trim();
 
           // Regex to filter out verse numbering digits and specific symbols.
-          final digitsRegex = RegExp(r'^[\d٠-٩*-]+$');
+          final digitsRegex = RegExp(
+            r'^[\d٠-٩۩۞ۤ\u06D6-\u06DC\u06DE\u06E4\u06E9]+$',
+          );
 
+          // Split the text into "logical words" and drop tokens that are
+          // only digits or decorative symbols (they don't map to QCF glyphs).
           final logicalWords = ayaText
               .split(RegExp(r'\s+'))
               .where((word) => word.isNotEmpty && !digitsRegex.hasMatch(word))
               .toList();
 
+          // Prepare the raw QCF glyph string for this ayah.
           final rawQcf = ayahData['qcfData']
               .toString()
               .replaceAll('\n', '')
               .trimRight();
 
-          final glyph = getaya_noQCF(surahNumber, verseNumber);
+          // Fetch the ayah-number glyph from the QCF dataset (cached internally).
+          final glyph = getAyaNoQCF(surahNumber, verseNumber);
 
+          // Strip the trailing ayah-number glyph from the QCF body text so we
+          // can render it separately with its own dedicated style.
           final cleanQcf = rawQcf.endsWith(glyph)
               ? rawQcf.substring(0, rawQcf.length - glyph.length)
               : rawQcf;
 
-          final defaultStyle = (ayahStyle ??
-                  QuranTextStyles.qcfStyle(
-                    height: 1.45,
-                    pageNumber: pageNumber,
-                    isTajweed: isTajweed,
-                    isDark: isDarkMode,
-                  ))
-              .copyWith(color: null);
+          // Resolve the base style: custom [ayahStyle] takes priority over the
+          // default QCF style derived from the current page number.
+          final defaultStyle =
+              (ayahStyle ??
+                      QuranTextStyles.qcfStyle(
+                        height: 1.45,
+                        pageNumber: pageNumber,
+                        isTajweed: isTajweed,
+                        isDark: isDarkMode,
+                      ))
+                  .copyWith(color: null);
 
+          // Main style used for the verse body characters.
           final mainTextStyle = defaultStyle.copyWith(
             height: null,
             fontSize: fontSize,
@@ -181,8 +217,8 @@ class QuranSurahListView extends StatelessWidget {
             color: null,
             fontFamily: QuranTextStyles.getQcfFontFamily(
               pageNumber: pageNumber,
-              isTajweed: true, 
-              isDark: false,   
+              isTajweed: true,
+              isDark: false,
             ),
           );
 
@@ -191,13 +227,17 @@ class QuranSurahListView extends StatelessWidget {
           for (final highlight in wordHighlights) {
             if (highlight.surah == surahNumber &&
                 highlight.verseNumber == verseNumber) {
-              wordHighlightMap['${highlight.surah}_${highlight.verseNumber}_${highlight.wordIndex}'] = highlight;
+              wordHighlightMap[
+                  '${highlight.surah}_${highlight.verseNumber}_${highlight.wordIndex}'] =
+                  highlight;
             }
           }
 
+          // Regex used to count Tajweed/symbol marks embedded in a logical word.
           final symbolRegex = RegExp(r'[\u06D6-\u06DC\u06DE\u06E9]');
           final wordSpans = <InlineSpan>[];
 
+          // Trackers for mapping logical words to QCF glyphs.
           int qcfCharIndex = 0;
           int currentWordIndex = 0;
 
@@ -205,9 +245,10 @@ class QuranSurahListView extends StatelessWidget {
           for (int i = 0; i < logicalWords.length; i++) {
             final logicalWord = logicalWords[i];
             final symbolCount = symbolRegex.allMatches(logicalWord).length;
+            // Each logical word consumes 1 base glyph plus one per symbol.
             final glyphsNeeded = 1 + symbolCount;
             final thisWordIndex = currentWordIndex;
-            
+
             currentWordIndex++;
 
             for (int k = 0; k < glyphsNeeded; k++) {
@@ -216,33 +257,37 @@ class QuranSurahListView extends StatelessWidget {
                   (cleanQcf[qcfCharIndex] == ' ' ||
                       cleanQcf[qcfCharIndex] == '\u200B')) {
                 wordSpans.add(
-                  TextSpan(
-                    text: cleanQcf[qcfCharIndex],
-                    style: mainTextStyle,
-                  ),
+                  TextSpan(text: cleanQcf[qcfCharIndex], style: mainTextStyle),
                 );
                 qcfCharIndex++;
               }
 
+              // Guard against running past the end of the QCF string.
               if (qcfCharIndex >= cleanQcf.length) break;
 
               final char = cleanQcf[qcfCharIndex];
-              
+
               // Identify stop signs and special symbols.
-              final isSymbol = logicalWord.startsWith('۞') ||
-                      logicalWord.startsWith('۩')
+              final isSymbol =
+                  logicalWord.startsWith('۞') || logicalWord.startsWith('۩')
                   ? k == 0
                   : k > 0;
 
-              final highlight = wordHighlightMap['${surahNumber}_${verseNumber}_$thisWordIndex'];
+              // Look up an optional per-word highlight for this specific word.
+              final highlight =
+                  wordHighlightMap['${surahNumber}_${verseNumber}_$thisWordIndex'];
               TextStyle charStyle = mainTextStyle;
 
               if (highlight != null) {
+                // Apply a text color if provided.
                 if (highlight.textColor != null) {
                   charStyle = charStyle.copyWith(color: highlight.textColor);
                 }
+                // Apply a background color, but skip it for decorative symbols.
                 if (highlight.backgroundColor != null && !isSymbol) {
-                  charStyle = charStyle.copyWith(backgroundColor: highlight.backgroundColor);
+                  charStyle = charStyle.copyWith(
+                    backgroundColor: highlight.backgroundColor,
+                  );
                 }
               }
 
@@ -250,17 +295,18 @@ class QuranSurahListView extends StatelessWidget {
                 TextSpan(
                   text: char,
                   style: charStyle,
+                  // Attach a tap recognizer to real words only (not symbols).
                   recognizer: isSymbol
                       ? null
                       : (TapGestureRecognizer()
-                        ..onTap = () {
-                          onWordTap?.call(
-                            surahNumber,
-                            verseNumber,
-                            thisWordIndex,
-                            logicalWord,
-                          );
-                        }),
+                          ..onTap = () {
+                            onWordTap?.call(
+                              surahNumber,
+                              verseNumber,
+                              thisWordIndex,
+                              logicalWord,
+                            );
+                          }),
                 ),
               );
 
@@ -271,10 +317,7 @@ class QuranSurahListView extends StatelessWidget {
           // Catch any remaining characters at the end of the ayah.
           while (qcfCharIndex < cleanQcf.length) {
             wordSpans.add(
-              TextSpan(
-                text: cleanQcf[qcfCharIndex],
-                style: mainTextStyle,
-              ),
+              TextSpan(text: cleanQcf[qcfCharIndex], style: mainTextStyle),
             );
             qcfCharIndex++;
           }
@@ -285,10 +328,7 @@ class QuranSurahListView extends StatelessWidget {
               children: [
                 ...wordSpans,
                 if (rawQcf.endsWith(glyph))
-                  TextSpan(
-                    text: glyph,
-                    style: numberTextStyle,
-                  ),
+                  TextSpan(text: glyph, style: numberTextStyle),
               ],
             ),
             textAlign: TextAlign.right,
@@ -296,22 +336,23 @@ class QuranSurahListView extends StatelessWidget {
           );
 
           // Check if the entire verse is highlighted.
-          final matchingHighlights = highlights.where((h) =>
-              h.surah == surahNumber && h.verseNumber == verseNumber);
-          final matchingHighlight = matchingHighlights.isEmpty ? null : matchingHighlights.first;
+          final matchingHighlights = highlights.where(
+            (h) => h.surah == surahNumber && h.verseNumber == verseNumber,
+          );
+          final matchingHighlight = matchingHighlights.isEmpty
+              ? null
+              : matchingHighlights.first;
           final isHighlighted = matchingHighlight != null;
           final highlightColor = matchingHighlight?.color ?? Colors.transparent;
 
           // Build the final interactive verse container.
           final ayahInteractiveWidget = GestureDetector(
+            // Long-press reports the verse context back to the caller.
             onLongPressStart: (details) {
-              onLongPress?.call(
-                surahNumber,
-                verseNumber,
-                details,
-              );
+              onLongPress?.call(surahNumber, verseNumber, details);
             },
             child: ayahBuilder != null
+                // Allow the caller to fully customize the verse container.
                 ? ayahBuilder!(
                     context,
                     surahNumber,
@@ -321,10 +362,17 @@ class QuranSurahListView extends StatelessWidget {
                     isHighlighted,
                     highlightColor,
                   )
+                // Default container with optional highlight background.
                 : Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: isHighlighted
                           ? highlightColor.withAlpha(76)
@@ -335,6 +383,7 @@ class QuranSurahListView extends StatelessWidget {
                   ),
           );
 
+          // Use a stable key so Flutter can efficiently reuse list items.
           return KeyedSubtree(
             key: ValueKey('ayah_${surahNumber}_$verseNumber'),
             child: ayahInteractiveWidget,

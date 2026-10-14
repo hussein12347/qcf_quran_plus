@@ -3,7 +3,7 @@ description: offline Quran package with Hafs font and have tajweed.
 repository: https://github.com/hussein12347/qcf_quran_plus
 homepage: https://github.com/hussein12347/qcf_quran_plus/?tab=readme-ov-file
 #27-9-2026
-version: 0.0.9
+version: 0.1.1
 
 
 environment:

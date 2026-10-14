@@ -17,7 +17,9 @@ import 'package:qcf_quran_plus/src/data/suwar.dart';
 export 'src/widgets/quran_page_view.dart';
 export 'src/widgets/quran_surah_list_view.dart';
 export 'src/utils/quran_text_styles.dart';
+export 'src/widgets/surah_header_widget.dart';
 export 'src/utils/font_loader_service.dart';
+
 // ---------------------------------------------------------------------------
 // 2. Models Exports
 // ---------------------------------------------------------------------------
@@ -30,6 +32,7 @@ export 'src/data/quarters.dart';
 export 'src/data/juzs.dart';
 export 'src/data/page_data.dart';
 export 'src/data/suwar.dart';
+
 // ---------------------------------------------------------------------------
 // 3. Quran Data Helper Functions
 // ---------------------------------------------------------------------------
@@ -56,36 +59,48 @@ const int totalVerseCount = 6236;
 ///
 /// Throws an exception if the [pageNumber] is out of valid bounds (1-604).
 List getPageData(int pageNumber) {
+  // Validate that the requested page is within the supported Quran page range.
   if (pageNumber < 1 || pageNumber > 604) {
     throw "Invalid page number. Page number must be between 1 and 604";
   }
+
+  // Convert the one-based page number into a zero-based list index.
   return pageData[pageNumber - 1];
 }
 
 /// Returns the total number of Surahs present on a specific [pageNumber].
 int getSurahCountByPage(int pageNumber) {
+  // Ensure the page number is valid before accessing page data.
   if (pageNumber < 1 || pageNumber > 604) {
     throw "Invalid page number. Page number must be between 1 and 604";
   }
+
+  // Each item in the page data list represents one Surah section on the page.
   return pageData[pageNumber - 1].length;
 }
 
 /// Returns the total number of verses (Ayahs) present on a specific [pageNumber].
 int getVerseCountByPage(int pageNumber) {
+  // Validate the requested page before reading its verse ranges.
   if (pageNumber < 1 || pageNumber > 604) {
     throw "Invalid page number. Page number must be between 1 and 604";
   }
+
   int totalVerseCount = 0;
+
+  // Sum the verse ranges for every Surah section that appears on the page.
   for (int i = 0; i < pageData[pageNumber - 1].length; i++) {
     totalVerseCount += int.parse(
       pageData[pageNumber - 1][i]!["end"].toString(),
     );
   }
+
   return totalVerseCount;
 }
 
 /// Converts an integer to an Arabic numeral string.
 String _convertToArabicNumber(int number) {
+  // Mapping from Western digits to Arabic-Indic digits.
   const Map<String, String> arabicNumbers = {
     "0": "٠",
     "1": "١",
@@ -98,6 +113,8 @@ String _convertToArabicNumber(int number) {
     "8": "٨",
     "9": "٩",
   };
+
+  // Convert every digit individually, then join the result back into a string.
   return number.toString().split('').map((e) => arabicNumbers[e] ?? e).join('');
 }
 
@@ -106,12 +123,14 @@ String _convertToArabicNumber(int number) {
 /// If no quarter starts on this page, it returns an empty string.
 /// Pass [isArabic] as `true` (default) for Arabic text, or `false` for English.
 String getHizbTextByPage(int pageNumber, {bool isArabic = true}) {
+  // Find the index of the quarter that starts exactly on the requested page.
   int quarterIndex = quarters.indexWhere(
     (q) => getPageNumber(q['surah']!, q['ayah']!) == pageNumber,
   );
 
   final bool showHizbText = quarterIndex != -1;
 
+  // No quarter begins on this page, so there is no Hizb label to show.
   if (!showHizbText) return "";
 
   int quarter = quarterIndex + 1;
@@ -120,6 +139,7 @@ String getHizbTextByPage(int pageNumber, {bool isArabic = true}) {
 
   String hizbNumber = isArabic ? _convertToArabicNumber(hizb) : hizb.toString();
 
+  // Build the localized Hizb label based on the quarter position inside the Hizb.
   if (isArabic) {
     if (quarterInHizb == 1) return "الحزب $hizbNumber";
     if (quarterInHizb == 2) return "ربع الحزب $hizbNumber";
@@ -141,8 +161,10 @@ String getHizbTextByPage(int pageNumber, {bool isArabic = true}) {
 String getCurrentHizbTextForPage(int pageNumber, {bool isArabic = true}) {
   int currentQuarterIndex = 0;
 
+  // Track the latest quarter that begins on or before the requested page.
   for (int i = 0; i < quarters.length; i++) {
     int qPage = getPageNumber(quarters[i]['surah']!, quarters[i]['ayah']!);
+
     if (pageNumber >= qPage) {
       currentQuarterIndex = i;
     } else {
@@ -156,6 +178,7 @@ String getCurrentHizbTextForPage(int pageNumber, {bool isArabic = true}) {
 
   String hizbNumber = isArabic ? _convertToArabicNumber(hizb) : hizb.toString();
 
+  // Build the localized Hizb label based on the quarter position inside the Hizb.
   if (isArabic) {
     if (quarterInHizb == 1) return "الحزب $hizbNumber";
     if (quarterInHizb == 2) return "ربع الحزب $hizbNumber";
@@ -174,6 +197,8 @@ String getCurrentHizbTextForPage(int pageNumber, {bool isArabic = true}) {
 /// Returns the Quarter (Rub el Hizb) number (1-240) based on the [surahNumber] and [ayaNo].
 int getQuarterNumber(int surahNumber, int ayaNo) {
   int currentQuarter = 1;
+
+  // Iterate through quarter boundaries and keep the latest boundary reached.
   for (int i = 0; i < quarters.length; i++) {
     int qSurah = quarters[i]["surah"]!;
     int qAyah = quarters[i]["ayah"]!;
@@ -184,11 +209,13 @@ int getQuarterNumber(int surahNumber, int ayaNo) {
       break;
     }
   }
+
   return currentQuarter;
 }
 
 /// Returns the Juz number (1-30) for a specific [surahNumber] and [ayaNo].
 int getJuzNumber(int surahNumber, int ayaNo) {
+  // Search each Juz definition for a verse range containing the target ayah.
   for (var juz in juz) {
     if (juz["verses"].keys.contains(surahNumber)) {
       if (ayaNo >= juz["verses"][surahNumber][0] &&
@@ -197,39 +224,49 @@ int getJuzNumber(int surahNumber, int ayaNo) {
       }
     }
   }
+
+  // Return -1 when the verse cannot be mapped to a Juz.
   return -1;
 }
 
 /// Returns the Surah name in transliterated format for a given [surahNumber].
 String getSurahName(int surahNumber) {
+  // Validate the Surah number before accessing the Surah list.
   if (surahNumber > 114 || surahNumber <= 0) {
     throw "No Surah found with given surahNumber";
   }
+
   return surah[surahNumber - 1]['name'].toString();
 }
 
 /// Returns the translated Surah name in English for a given [surahNumber].
 String getSurahNameEnglish(int surahNumber) {
+  // Validate the Surah number before accessing the Surah list.
   if (surahNumber > 114 || surahNumber <= 0) {
     throw "No Surah found with given surahNumber";
   }
+
   return surah[surahNumber - 1]['english'].toString();
 }
 
 /// Returns the Surah name in Arabic for a given [surahNumber].
 String getSurahNameArabic(int surahNumber) {
+  // Validate the Surah number before accessing the Surah list.
   if (surahNumber > 114 || surahNumber <= 0) {
     throw "No Surah found with given surahNumber";
   }
+
   return surah[surahNumber - 1]['arabic'].toString();
 }
 
 /// Returns the page number (1-604) of the Quran where the specific [surahNumber] and [ayaNo] is located.
 int getPageNumber(int surahNumber, int ayaNo) {
+  // Validate the Surah number before scanning the page data.
   if (surahNumber > 114 || surahNumber <= 0) {
     throw "No Surah found with given surahNumber";
   }
 
+  // Scan all pages and Surah ranges to find the page containing the ayah.
   for (int pageIndex = 0; pageIndex < pageData.length; pageIndex++) {
     for (
       int surahIndexInPage = 0;
@@ -237,6 +274,7 @@ int getPageNumber(int surahNumber, int ayaNo) {
       surahIndexInPage++
     ) {
       final e = pageData[pageIndex][surahIndexInPage];
+
       if (e['surah'] == surahNumber &&
           e['start'] <= ayaNo &&
           e['end'] >= ayaNo) {
@@ -250,17 +288,21 @@ int getPageNumber(int surahNumber, int ayaNo) {
 
 /// Returns the place of revelation ('Makkah' or 'Madinah') for a given [surahNumber].
 String getPlaceOfRevelation(int surahNumber) {
+  // Validate the Surah number before accessing the Surah list.
   if (surahNumber > 114 || surahNumber <= 0) {
     throw "No Surah found with given surahNumber";
   }
+
   return surah[surahNumber - 1]['place'].toString();
 }
 
 /// Returns the total count of verses in a specific [surahNumber].
 int getVerseCount(int surahNumber) {
+  // Validate the Surah number before accessing the Surah list.
   if (surahNumber > 114 || surahNumber <= 0) {
     throw "No verse found with given surahNumber";
   }
+
   return int.parse(surah[surahNumber - 1]['aya'].toString());
 }
 
@@ -269,6 +311,8 @@ int getVerseCount(int surahNumber) {
 /// Set [verseEndSymbol] to `true` if you want the Ayah number symbol appended to the text.
 String getVerse(int surahNumber, int ayaNo, {bool verseEndSymbol = false}) {
   String verse = "";
+
+  // Look up the verse in the Quran dataset.
   for (var i in quran) {
     if (i['sora'] == surahNumber && i['aya_no'] == ayaNo) {
       verse = i['aya_text'].toString();
@@ -276,10 +320,12 @@ String getVerse(int surahNumber, int ayaNo, {bool verseEndSymbol = false}) {
     }
   }
 
+  // Throw when the requested verse does not exist in the dataset.
   if (verse == "") {
     throw "No verse found with given surahNumber and aya_no.\n\n";
   }
 
+  // Remove the sajdah marker from the plain verse text.
   return verse.replaceAll('۩', '');
 }
 
@@ -290,8 +336,10 @@ String getVerseEndSymbol(int ayaNo, {bool arabicNumeral = true}) {
   var arabicNumeric = '';
   var digits = ayaNo.toString().split("").toList();
 
+  // If Western numerals are requested, return the end-of-ayah marker directly.
   if (!arabicNumeral) return '\u06dd${ayaNo.toString()}';
 
+  // Mapping used to render Arabic-Indic numerals.
   const Map arabicNumbers = {
     "0": "٠",
     "1": "۱",
@@ -305,6 +353,7 @@ String getVerseEndSymbol(int ayaNo, {bool arabicNumeral = true}) {
     "9": "۹",
   };
 
+  // Convert each digit of the ayah number into its Arabic numeral form.
   for (var e in digits) {
     arabicNumeric += arabicNumbers[e];
   }
@@ -319,11 +368,16 @@ String getAyaNoQCFLite(
   bool verseEndSymbol = true,
 }) {
   String glyph = "";
+
+  // Search for the target verse and extract its final QCF glyph.
   for (var i in quran) {
     if (i['sora'] == surahNumber && i['aya_no'] == ayaNo) {
       final String qcfData = i['aya_text_othmanic'].toString();
 
       final bool endsWithNewline = qcfData.endsWith('\n');
+
+      // If the text ends with a newline, take the glyph before the newline.
+      // Otherwise, take the final character in the string.
       glyph = endsWithNewline
           ? qcfData.substring(qcfData.length - 2, qcfData.length - 1)
           : qcfData.substring(qcfData.length - 1);
@@ -331,6 +385,7 @@ String getAyaNoQCFLite(
     }
   }
 
+  // Throw when the requested verse or QCF glyph cannot be found.
   if (glyph == "") {
     throw "No verse found with given surahNumber and aya_no.\n\n";
   }
@@ -338,28 +393,32 @@ String getAyaNoQCFLite(
   return glyph;
 }
 
-// تعريف Map لتخزين أرقام الآيات لعدم البحث عنها مرة أخرى (Cache)
+/// In-memory cache used to avoid repeatedly scanning the Quran dataset for
+/// the same verse glyph. The key format is `surahNumber_ayaNo`.
 final Map<String, String> _verseGlyphCache = {};
 
-/// دالة سريعة جداً لجلب رمز رقم الآية باستخدام qcfData
-String getaya_noQCF(int surahNumber, int ayaNo) {
-  // مفتاح البحث المخصص للآية
+/// A very fast helper that returns the ayah number glyph from the `qcfData` field.
+///
+/// Results are cached in [_verseGlyphCache] so each verse is scanned at most once
+/// during the application lifetime. This prevents repeated lookups from causing lag.
+String getAyaNoQCF(int surahNumber, int ayaNo) {
+  // Build a unique cache key for the requested verse.
   final key = '${surahNumber}_$ayaNo';
 
-  // إذا بحثنا عنها من قبل، أعدها فوراً (هذا يمنع الـ Lag)
+  // Return the cached glyph immediately when available.
   if (_verseGlyphCache.containsKey(key)) {
     return _verseGlyphCache[key]!;
   }
 
   String glyph = "";
 
-  // حلقة البحث ستعمل مرة واحدة فقط لكل آية في التطبيق كله
+  // This lookup runs only once per verse for the entire application.
   for (var i in quran) {
     if (i['sora'] == surahNumber && i['aya_no'] == ayaNo) {
-      // نستخدم حقل qcfData كما هو موجود في الـ JSON الخاص بك
+      // Use the `qcfData` field exactly as provided by the JSON dataset.
       final String qcfData = i['qcfData'].toString().trim();
 
-      // الرمز هو دائماً الحرف الأخير في النص بعد التنظيف من المسافات أو \n
+      // The glyph is always the final character after trimming whitespace/newlines.
       if (qcfData.isNotEmpty) {
         glyph = qcfData.substring(qcfData.length - 1);
       }
@@ -367,129 +426,106 @@ String getaya_noQCF(int surahNumber, int ayaNo) {
     }
   }
 
+  // Throw when the requested verse or QCF glyph cannot be found.
   if (glyph.isEmpty) {
     throw "No verse found with given surahNumber and aya_no.\n\n";
   }
 
-  // حفظ الرمز في الذاكرة لتسريع المرات القادمة
+  // Store the glyph in memory to speed up future lookups.
   _verseGlyphCache[key] = glyph;
 
   return glyph;
 }
 
-/// Searches the Quran text for the specified [words].
+/// Normalizes Arabic text for search and comparison.
 ///
-/// Returns a [Map] containing:
-/// - `occurences`: The total number of matches found.
-/// - `result`: A [List] of [Map]s containing the `sora` and `aya_no` of the matches.
+/// This removes diacritics, unifies alif variants, unifies ya forms, unifies
+/// ta marbuta, and collapses repeated whitespace.
 String normalizeArabicText(String text) {
   if (text.isEmpty) return text;
 
-  // إزالة التشكيل
-  text = text.replaceAll(
-    RegExp(r'[\u064B-\u065F\u0670]'),
-    '',
-  );
+  // Remove Arabic diacritics (tashkeel).
+  text = text.replaceAll(RegExp(r'[\u064B-\u065F\u0670]'), '');
 
-  // توحيد الألف
-  text = text.replaceAll(
-    RegExp(r'[إأآا]'),
-    'ا',
-  );
+  // Unify alif variants.
+  text = text.replaceAll(RegExp(r'[إأآا]'), 'ا');
 
-  // توحيد الياء
-  text = text.replaceAll(
-    RegExp(r'[يى]'),
-    'ي',
-  );
+  // Unify ya variants.
+  text = text.replaceAll(RegExp(r'[يى]'), 'ي');
 
-  // توحيد التاء المربوطة
+  // Unify ta marbuta.
   text = text.replaceAll('ة', 'ه');
 
-  // توحيد المسافات
-  text = text.replaceAll(
-    RegExp(r'\s+'),
-    ' ',
-  ).trim();
+  // Collapse repeated whitespace and trim leading/trailing spaces.
+  text = text.replaceAll(RegExp(r'\s+'), ' ').trim();
 
   return text;
 }
 
-
 // ============================================================
-// البحث
+// Search
 // ============================================================
 
-Map<String, dynamic> searchWords(
-    String query, {
-      int limit = 50,
-    }) {
+/// Searches the Quran text for the specified [query].
+///
+/// Returns a [Map] containing:
+/// - `occurences`: The total number of matches found.
+/// - `result`: A [List] of [Map]s containing the `sora` and `aya_no` of the matches.
+///
+/// The search first checks the `aya_text_emlaey` field. If no results are found,
+/// it falls back to searching the `aya_text` field.
+Map<String, dynamic> searchWords(String query, {int limit = 50}) {
+  // Return an empty result for blank queries.
   if (query.trim().isEmpty) {
-    return {
-      "occurences": 0,
-      "result": [],
-    };
+    return {"occurences": 0, "result": []};
   }
 
   final List<Map<String, dynamic>> result = [];
 
-  // Normalize query
-  final String normalizedQuery =
-  normalizeArabicText(query.toLowerCase());
+  // Normalize the query by removing diacritics and unifying letters.
+  final String normalizedQuery = normalizeArabicText(query.toLowerCase());
 
   if (normalizedQuery.isEmpty) {
-    return {
-      "occurences": 0,
-      "result": [],
-    };
+    return {"occurences": 0, "result": []};
   }
 
   // ------------------------------------------------------------
-  // نسخة البحث بدون مسافات
+  // Whitespace-free search version
   // ------------------------------------------------------------
   //
-  // مثال:
+  // Example:
   //
-  // "و تلك حدود"
+  // "wa tilka hudood"
   //
-  // تصبح:
+  // becomes:
   //
-  // "وتلكحدود"
+  // "watilkahudood"
   //
-  final String searchQuery =
-  normalizedQuery.replaceAll(RegExp(r'\s+'), '');
+  final String searchQuery = normalizedQuery.replaceAll(RegExp(r'\s+'), '');
 
   if (searchQuery.isEmpty) {
-    return {
-      "occurences": 0,
-      "result": [],
-    };
+    return {"occurences": 0, "result": []};
   }
 
   // ============================================================
-  // دالة التحقق
+  // Match checker
   // ============================================================
 
+  /// Returns `true` when [text] contains the normalized, whitespace-free query.
   bool containsSearchQuery(String text) {
-    final String normalizedText =
-    normalizeArabicText(text.toLowerCase());
+    final String normalizedText = normalizeArabicText(text.toLowerCase());
 
-    final String searchableText =
-    normalizedText.replaceAll(
-      RegExp(r'\s+'),
-      '',
-    );
+    final String searchableText = normalizedText.replaceAll(RegExp(r'\s+'), '');
 
     return searchableText.contains(searchQuery);
   }
 
   // ============================================================
-  // 1. البحث في Emlaey
+  // 1. Search in the Emlaey text field
   // ============================================================
 
   for (final aya in quran) {
-    final String emlaeyText =
-        aya['aya_text_emlaey']?.toString() ?? '';
+    final String emlaeyText = aya['aya_text_emlaey']?.toString() ?? '';
 
     if (emlaeyText.isEmpty) continue;
 
@@ -510,13 +546,12 @@ Map<String, dynamic> searchWords(
   }
 
   // ============================================================
-  // 2. البحث في Othmanic إذا لم نجد نتائج
+  // 2. Fallback search in the Othmanic text field
   // ============================================================
 
   if (result.isEmpty) {
     for (final aya in quran) {
-      final String othmanicText =
-          aya['aya_text']?.toString() ?? '';
+      final String othmanicText = aya['aya_text']?.toString() ?? '';
 
       if (othmanicText.isEmpty) continue;
 
@@ -537,11 +572,9 @@ Map<String, dynamic> searchWords(
     }
   }
 
-  return {
-    "occurences": result.length,
-    "result": result,
-  };
+  return {"occurences": result.length, "result": result};
 }
+
 /// Converts Quran text to a normalized form suitable for search or comparison.
 ///
 /// Removes Koranic annotations, tatweel, tashkeel, and unifies certain letters
@@ -618,6 +651,7 @@ String normalise(String input) => input
 /// Keeps base letters intact while removing characters such as Fatha, Damma,
 /// Kasra, Shadda, and tanwin marks. Helpful for lightweight fuzzy matching.
 String removeDiacritics(String input) {
+  // Mapping of diacritic characters to an empty string.
   Map<String, String> diacriticsMap = {
     'َ': '',
     'ُ': '',
@@ -628,11 +662,14 @@ String removeDiacritics(String input) {
     'ٍ': '',
   };
 
+  // Build a regular expression pattern from the diacritic keys.
   String diacriticsPattern = diacriticsMap.keys
       .map((e) => RegExp.escape(e))
       .join('|');
+
   RegExp exp = RegExp('[$diacriticsPattern]');
 
+  // Remove all matched diacritics from the input.
   String textWithoutDiacritics = input.replaceAll(exp, '');
 
   return textWithoutDiacritics;
